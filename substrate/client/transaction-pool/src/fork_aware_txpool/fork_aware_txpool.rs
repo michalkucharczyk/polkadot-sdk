@@ -1187,7 +1187,7 @@ where
 		};
 
 		match event {
-			ChainEvent::NewBestBlock { .. } => {},
+			ChainEvent::NewBestBlock { .. } | ChainEvent::NewBlock { .. } => {},
 			ChainEvent::Finalized { hash, ref tree_route } => {
 				self.handle_finalized(hash, tree_route).await;
 
