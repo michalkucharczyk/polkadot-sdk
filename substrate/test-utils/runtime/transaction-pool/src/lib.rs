@@ -23,7 +23,7 @@ use codec::Encode;
 use futures::future::ready;
 use parking_lot::RwLock;
 use sc_transaction_pool::ChainApi;
-use sp_blockchain::{CachedHeaderMetadata, TreeRoute};
+use sp_blockchain::{CachedHeaderMetadata, HashAndNumber, TreeRoute};
 use sp_runtime::{
 	generic::{self, BlockId},
 	traits::{
@@ -305,6 +305,10 @@ impl TestApi {
 	pub fn genesis_hash(&self) -> Hash {
 		self.expect_hash_from_number(0)
 	}
+
+	pub fn expect_hash_and_number(&self, n: BlockNumber) -> HashAndNumber<Block> {
+		HashAndNumber { hash: self.expect_hash_from_number(n), number: n }
+	}
 }
 
 impl ChainApi for TestApi {
@@ -320,7 +324,7 @@ impl ChainApi for TestApi {
 		uxt: <Self::Block as BlockT>::Extrinsic,
 	) -> Self::ValidationFuture {
 		self.validation_requests.write().push(uxt.clone());
-		let mut block_number = None;
+		let block_number;
 
 		match self.block_id_to_number(&BlockId::Hash(at)) {
 			Ok(Some(number)) => {
