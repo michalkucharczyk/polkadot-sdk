@@ -9,6 +9,9 @@ homepage = "https://substrate.io"
 repository.workspace = true
 publish = false
 
+[lints]
+workspace = true
+
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
@@ -48,6 +51,8 @@ sp-externalities = { path = "../../primitives/externalities", default-features =
 # 3rd party
 array-bytes = { version = "6.1", optional = true }
 log = { version = "0.4.17", default-features = false }
+serde_json = { version = "1.0.107", default-features = false, features = ["alloc"] }
+hex-literal = { version = "0.4.1" }
 
 [dev-dependencies]
 futures = "0.3.21"
