@@ -151,7 +151,12 @@ where
 	}
 
 	fn pending_extrinsics(&self) -> RpcResult<Vec<Bytes>> {
-		Ok(self.pool.ready().map(|tx| tx.data().encode().into()).collect())
+		Ok(self
+			.pool
+			.ready(self.client.info().best_hash)
+			.into_iter()
+			.flat_map(|ready| ready.map(|tx| tx.data().encode().into()))
+			.collect())
 	}
 
 	fn remove_extrinsic(
