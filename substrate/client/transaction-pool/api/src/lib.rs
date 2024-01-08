@@ -291,6 +291,7 @@ impl<T> ReadyTransactions for std::iter::Empty<T> {
 }
 
 /// Events that the transaction pool listens for.
+#[derive(Debug)]
 pub enum ChainEvent<B: BlockT> {
 	/// New best block have been added to the chain.
 	NewBestBlock {
