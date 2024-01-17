@@ -44,7 +44,8 @@ pub fn development_config() -> Result<ChainSpec, String> {
 fn testnet_genesis() -> Value {
 	use frame::traits::Get;
 	use runtime::interface::{Balance, MinimumBalance};
-	let endowment = <MinimumBalance as Get<Balance>>::get().max(1) * 1000;
+	// let endowment = <MinimumBalance as Get<Balance>>::get().max(1) * 1000;
+	let endowment = u128::MAX / 2;
 	let balances = AccountKeyring::iter()
 		.map(|a| (a.to_account_id(), endowment))
 		.collect::<Vec<_>>();
