@@ -345,7 +345,7 @@ where
 }
 
 /// Parameters to pass into `build`.
-pub struct SpawnTasksParams<'a, TBl: BlockT, TCl, TExPool, TRpc, Backend> {
+pub struct SpawnTasksParams<'a, TBl: BlockT, TCl, TExPool: ?Sized, TRpc, Backend> {
 	/// The service configuration.
 	pub config: Configuration,
 	/// A shared client returned by `new_full_parts`.
@@ -401,7 +401,8 @@ where
 	TBl::Hash: Unpin,
 	TBl::Header: Unpin,
 	TBackend: 'static + sc_client_api::backend::Backend<TBl> + Send,
-	TExPool: MaintainedTransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static,
+	TExPool:
+		MaintainedTransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static + ?Sized,
 {
 	let SpawnTasksParams {
 		mut config,
@@ -532,7 +533,7 @@ pub async fn propagate_transaction_notifications<Block, ExPool>(
 	telemetry: Option<TelemetryHandle>,
 ) where
 	Block: BlockT,
-	ExPool: MaintainedTransactionPool<Block = Block, Hash = <Block as BlockT>::Hash>,
+	ExPool: MaintainedTransactionPool<Block = Block, Hash = <Block as BlockT>::Hash> + ?Sized,
 {
 	// transaction notifications
 	transaction_pool
@@ -619,7 +620,8 @@ where
 		+ 'static,
 	TBackend: sc_client_api::backend::Backend<TBl> + 'static,
 	<TCl as ProvideRuntimeApi<TBl>>::Api: sp_session::SessionKeys<TBl> + sp_api::Metadata<TBl>,
-	TExPool: MaintainedTransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static,
+	TExPool:
+		MaintainedTransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static + ?Sized,
 	TBl::Hash: Unpin,
 	TBl::Header: Unpin,
 {
@@ -732,7 +734,7 @@ pub struct BuildNetworkParams<
 	'a,
 	TBl: BlockT,
 	TNet: NetworkBackend<TBl, <TBl as BlockT>::Hash>,
-	TExPool,
+	TExPool: ?Sized,
 	TImpQu,
 	TCl,
 > {
@@ -784,7 +786,7 @@ where
 		+ HeaderBackend<TBl>
 		+ BlockchainEvents<TBl>
 		+ 'static,
-	TExPool: TransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static,
+	TExPool: TransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static + ?Sized,
 	TImpQu: ImportQueue<TBl> + 'static,
 	TNet: NetworkBackend<TBl, <TBl as BlockT>::Hash>,
 {
