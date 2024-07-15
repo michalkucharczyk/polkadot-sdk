@@ -154,6 +154,7 @@ where
 		telemetry
 	});
 
+
 	let transaction_pool = sc_transaction_pool::Builder::new()
 		.with_options(config.transaction_pool.clone())
 		.build(
