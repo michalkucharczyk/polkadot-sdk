@@ -21,6 +21,7 @@ codec = { package = "parity-scale-codec", version = "3.6.12" }
 futures = "0.3.30"
 futures-timer = "3.0.2"
 linked-hash-map = "0.5.4"
+indexmap = "2.0.0"
 log = { workspace = true, default-features = true }
 parking_lot = "0.12.1"
 serde = { features = ["derive"], workspace = true, default-features = true }
