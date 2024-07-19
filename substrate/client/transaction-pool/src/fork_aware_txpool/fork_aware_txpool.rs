@@ -22,7 +22,7 @@ use super::{
 	import_notification_sink::MultiViewImportNotificationSink,
 	metrics::MetricsLink as PrometheusMetrics,
 	multi_view_listener::MultiViewListener,
-	tx_mem_pool::{TxMemPool, TXMEMPOOL_TRANSACTION_LIMIT_MULTIPLIER},
+	tx_mem_pool::{TxMemPool},
 	view::View,
 	view_store::ViewStore,
 };
