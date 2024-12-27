@@ -25,6 +25,8 @@ sp-core.workspace = true
 sp-io.workspace = true
 sp-runtime.workspace = true
 
+impl-trait-for-tuples = "0.2.2"
+
 [dev-dependencies]
 pallet-balances = { default-features = true, workspace = true }
 pallet-collective = { default-features = true, workspace = true }
