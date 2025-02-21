@@ -17,11 +17,8 @@
 //! New governance configurations for the Rococo runtime.
 
 use super::*;
-use frame_support::{
-	parameter_types,
-	traits::{ConstU16, EitherOf},
-};
-use frame_system::EnsureRootWithSuccess;
+use frame_support::{ord_parameter_types, parameter_types, traits::{ConstU16, EitherOf}};
+use frame_system::{EnsureRootWithSuccess, EnsureSignedBy};
 
 mod origins;
 pub use origins::{
@@ -38,6 +35,8 @@ parameter_types! {
 	pub const VoteLockingPeriod: BlockNumber = 7 * DAYS;
 }
 
+pub struct EnsureAlwaysOK;
+
 impl pallet_conviction_voting::Config for Runtime {
 	type WeightInfo = weights::pallet_conviction_voting::WeightInfo<Self>;
 	type RuntimeEvent = RuntimeEvent;
@@ -49,6 +48,7 @@ impl pallet_conviction_voting::Config for Runtime {
 	type Polls = Referenda;
 	type BlockNumberProvider = System;
 	type VotingHooks = ();
+	type VoteRemovalOrigin =  EnsureSigned<AccountId>;
 }
 
 parameter_types! {
