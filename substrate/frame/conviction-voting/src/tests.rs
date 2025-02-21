@@ -17,10 +17,12 @@
 
 //! The crate's tests.
 
-use std::{cell::RefCell, collections::BTreeMap};
+use std::cell::RefCell;
+use std::collections::BTreeMap;
+use frame_system::EnsureSignedBy;
 
 use frame_support::{
-	assert_noop, assert_ok, derive_impl, parameter_types,
+	assert_noop, assert_ok, derive_impl, ord_parameter_types, parameter_types,
 	traits::{ConstU32, ConstU64, Contains, Polling, VoteTally},
 };
 use sp_runtime::BuildStorage;
@@ -146,6 +148,10 @@ impl Polling<TallyOf<Test>> for TestPolls {
 	}
 }
 
+ord_parameter_types! {
+	pub const TwentyTwo: u64 = 22;
+}
+
 impl Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type Currency = pallet_balances::Pallet<Self>;
@@ -156,6 +162,8 @@ impl Config for Test {
 	type Polls = TestPolls;
 	type BlockNumberProvider = System;
 	type VotingHooks = HooksHandler;
+	// Any single technical committee member may remove a vote.
+	type VoteRemovalOrigin = EnsureSignedBy<TwentyTwo, u64>;
 }
 
 pub fn new_test_ext() -> sp_io::TestExternalities {
@@ -912,6 +920,34 @@ fn errors_with_remove_vote_work() {
 			Voting::remove_vote(RuntimeOrigin::signed(1), None, 3),
 			Error::<Test>::ClassNeeded
 		);
+	});
+}
+
+#[test]
+fn force_remove_vote_works() {
+	new_test_ext().execute_with(|| {
+		assert_noop!(
+			Voting::force_remove_vote(RuntimeOrigin::signed(22), 1, 0, 3),
+			Error::<Test>::NotVoter
+		);
+		assert_ok!(Voting::vote(RuntimeOrigin::signed(1), 3, aye(10, 2)));
+
+		// Referendum is ongoing: cannot force_remove_vote
+		assert_noop!(
+			Voting::remove_other_vote(RuntimeOrigin::signed(22), 1, 0, 3),
+			Error::<Test>::NoPermission
+		);
+
+		// Referendum is finished
+		Polls::set(vec![(3, Completed(1, true))].into_iter().collect());
+		run_to(6);
+
+		// Funds are still locked - can be triggered only by force_remove_vote
+		assert_noop!(
+			Voting::remove_other_vote(RuntimeOrigin::signed(2), 1, 0, 3),
+			Error::<Test>::NoPermissionYet
+		);
+		assert_ok!(Voting::force_remove_vote(RuntimeOrigin::signed(22), 1, 0, 3));
 	});
 }
 
