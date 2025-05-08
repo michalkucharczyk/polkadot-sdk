@@ -1,0 +1,543 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style>    .error_widget_wrapper {        background: inherit;        color: inherit;        border:none    }    .error_widget {        border-top: solid 2px;        border-bottom: solid 2px;        margin: 5px 0;        padding: 10px 40px;        white-space: pre-wrap;    }    .error_widget.ace_error, .error_widget_arrow.ace_error{        border-color: #ff5a5a    }    .error_widget.ace_warning, .error_widget_arrow.ace_warning{        border-color: #F1D817    }    .error_widget.ace_info, .error_widget_arrow.ace_info{        border-color: #5a5a5a    }    .error_widget.ace_ok, .error_widget_arrow.ace_ok{        border-color: #5aaa5a    }    .error_widget_arrow {        position: absolute;        border: solid 5px;        border-top-color: transparent!important;        border-right-color: transparent!important;        border-left-color: transparent!important;        top: -5px;    }</style><style id="ace-tm">.ace-tm .ace_gutter {background: #f0f0f0;color: #333;}.ace-tm .ace_print-margin {width: 1px;background: #e8e8e8;}.ace-tm .ace_fold {background-color: #6B72E6;}.ace-tm {background-color: #FFFFFF;color: black;}.ace-tm .ace_cursor {color: black;}.ace-tm .ace_invisible {color: rgb(191, 191, 191);}.ace-tm .ace_storage,.ace-tm .ace_keyword {color: blue;}.ace-tm .ace_constant {color: rgb(197, 6, 11);}.ace-tm .ace_constant.ace_buildin {color: rgb(88, 72, 246);}.ace-tm .ace_constant.ace_language {color: rgb(88, 92, 246);}.ace-tm .ace_constant.ace_library {color: rgb(6, 150, 14);}.ace-tm .ace_invalid {background-color: rgba(255, 0, 0, 0.1);color: red;}.ace-tm .ace_support.ace_function {color: rgb(60, 76, 114);}.ace-tm .ace_support.ace_constant {color: rgb(6, 150, 14);}.ace-tm .ace_support.ace_type,.ace-tm .ace_support.ace_class {color: rgb(109, 121, 222);}.ace-tm .ace_keyword.ace_operator {color: rgb(104, 118, 135);}.ace-tm .ace_string {color: rgb(3, 106, 7);}.ace-tm .ace_comment {color: rgb(76, 136, 107);}.ace-tm .ace_comment.ace_doc {color: rgb(0, 102, 255);}.ace-tm .ace_comment.ace_doc.ace_tag {color: rgb(128, 159, 191);}.ace-tm .ace_constant.ace_numeric {color: rgb(0, 0, 205);}.ace-tm .ace_variable {color: rgb(49, 132, 149);}.ace-tm .ace_xml-pe {color: rgb(104, 104, 91);}.ace-tm .ace_entity.ace_name.ace_function {color: #0000A2;}.ace-tm .ace_heading {color: rgb(12, 7, 255);}.ace-tm .ace_list {color:rgb(185, 6, 144);}.ace-tm .ace_meta.ace_tag {color:rgb(0, 22, 142);}.ace-tm .ace_string.ace_regex {color: rgb(255, 0, 0)}.ace-tm .ace_marker-layer .ace_selection {background: rgb(181, 213, 255);}.ace-tm.ace_multiselect .ace_selection.ace_start {box-shadow: 0 0 3px 0px white;}.ace-tm .ace_marker-layer .ace_step {background: rgb(252, 255, 0);}.ace-tm .ace_marker-layer .ace_stack {background: rgb(164, 229, 101);}.ace-tm .ace_marker-layer .ace_bracket {margin: -1px 0 0 -1px;border: 1px solid rgb(192, 192, 192);}.ace-tm .ace_marker-layer .ace_active-line {background: rgba(0, 0, 0, 0.07);}.ace-tm .ace_gutter-active-line {background-color : #dcdcdc;}.ace-tm .ace_marker-layer .ace_selected-word {background: rgb(250, 250, 255);border: 1px solid rgb(200, 200, 250);}.ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==") right repeat-y;}
+/*# sourceURL=ace/css/ace-tm */</style><style id="ace_editor.css">.ace_br1 {border-top-left-radius    : 3px;}.ace_br2 {border-top-right-radius   : 3px;}.ace_br3 {border-top-left-radius    : 3px; border-top-right-radius:    3px;}.ace_br4 {border-bottom-right-radius: 3px;}.ace_br5 {border-top-left-radius    : 3px; border-bottom-right-radius: 3px;}.ace_br6 {border-top-right-radius   : 3px; border-bottom-right-radius: 3px;}.ace_br7 {border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px;}.ace_br8 {border-bottom-left-radius : 3px;}.ace_br9 {border-top-left-radius    : 3px; border-bottom-left-radius:  3px;}.ace_br10{border-top-right-radius   : 3px; border-bottom-left-radius:  3px;}.ace_br11{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-left-radius:  3px;}.ace_br12{border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br13{border-top-left-radius    : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br14{border-top-right-radius   : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br15{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;}.ace_editor {position: relative;overflow: hidden;padding: 0;font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;direction: ltr;text-align: left;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}.ace_scroller {position: absolute;overflow: hidden;top: 0;bottom: 0;background-color: inherit;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;cursor: text;}.ace_content {position: absolute;box-sizing: border-box;min-width: 100%;contain: style size layout;font-variant-ligatures: no-common-ligatures;}.ace_dragging .ace_scroller:before{position: absolute;top: 0;left: 0;right: 0;bottom: 0;content: '';background: rgba(250, 250, 250, 0.01);z-index: 1000;}.ace_dragging.ace_dark .ace_scroller:before{background: rgba(0, 0, 0, 0.01);}.ace_selecting, .ace_selecting * {cursor: text !important;}.ace_gutter {position: absolute;overflow : hidden;width: auto;top: 0;bottom: 0;left: 0;cursor: default;z-index: 4;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;contain: style size layout;}.ace_gutter-active-line {position: absolute;left: 0;right: 0;}.ace_scroller.ace_scroll-left {box-shadow: 17px 0 16px -16px rgba(0, 0, 0, 0.4) inset;}.ace_gutter-cell {position: absolute;top: 0;left: 0;right: 0;padding-left: 19px;padding-right: 6px;background-repeat: no-repeat;}.ace_gutter-cell.ace_error {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABOFBMVEX/////////QRswFAb/Ui4wFAYwFAYwFAaWGAfDRymzOSH/PxswFAb/SiUwFAYwFAbUPRvjQiDllog5HhHdRybsTi3/Tyv9Tir+Syj/UC3////XurebMBIwFAb/RSHbPx/gUzfdwL3kzMivKBAwFAbbvbnhPx66NhowFAYwFAaZJg8wFAaxKBDZurf/RB6mMxb/SCMwFAYwFAbxQB3+RB4wFAb/Qhy4Oh+4QifbNRcwFAYwFAYwFAb/QRzdNhgwFAYwFAbav7v/Uy7oaE68MBK5LxLewr/r2NXewLswFAaxJw4wFAbkPRy2PyYwFAaxKhLm1tMwFAazPiQwFAaUGAb/QBrfOx3bvrv/VC/maE4wFAbRPBq6MRO8Qynew8Dp2tjfwb0wFAbx6eju5+by6uns4uH9/f36+vr/GkHjAAAAYnRSTlMAGt+64rnWu/bo8eAA4InH3+DwoN7j4eLi4xP99Nfg4+b+/u9B/eDs1MD1mO7+4PHg2MXa347g7vDizMLN4eG+Pv7i5evs/v79yu7S3/DV7/498Yv24eH+4ufQ3Ozu/v7+y13sRqwAAADLSURBVHjaZc/XDsFgGIBhtDrshlitmk2IrbHFqL2pvXf/+78DPokj7+Fz9qpU/9UXJIlhmPaTaQ6QPaz0mm+5gwkgovcV6GZzd5JtCQwgsxoHOvJO15kleRLAnMgHFIESUEPmawB9ngmelTtipwwfASilxOLyiV5UVUyVAfbG0cCPHig+GBkzAENHS0AstVF6bacZIOzgLmxsHbt2OecNgJC83JERmePUYq8ARGkJx6XtFsdddBQgZE2nPR6CICZhawjA4Fb/chv+399kfR+MMMDGOQAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: 2px center;}.ace_gutter-cell.ace_warning {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAmVBMVEX///8AAAD///8AAAAAAABPSzb/5sAAAAB/blH/73z/ulkAAAAAAAD85pkAAAAAAAACAgP/vGz/rkDerGbGrV7/pkQICAf////e0IsAAAD/oED/qTvhrnUAAAD/yHD/njcAAADuv2r/nz//oTj/p064oGf/zHAAAAA9Nir/tFIAAAD/tlTiuWf/tkIAAACynXEAAAAAAAAtIRW7zBpBAAAAM3RSTlMAABR1m7RXO8Ln31Z36zT+neXe5OzooRDfn+TZ4p3h2hTf4t3k3ucyrN1K5+Xaks52Sfs9CXgrAAAAjklEQVR42o3PbQ+CIBQFYEwboPhSYgoYunIqqLn6/z8uYdH8Vmdnu9vz4WwXgN/xTPRD2+sgOcZjsge/whXZgUaYYvT8QnuJaUrjrHUQreGczuEafQCO/SJTufTbroWsPgsllVhq3wJEk2jUSzX3CUEDJC84707djRc5MTAQxoLgupWRwW6UB5fS++NV8AbOZgnsC7BpEAAAAABJRU5ErkJggg==");background-position: 2px center;}.ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAJ0Uk5TAAB2k804AAAAPklEQVQY02NgIB68QuO3tiLznjAwpKTgNyDbMegwisCHZUETUZV0ZqOquBpXj2rtnpSJT1AEnnRmL2OgGgAAIKkRQap2htgAAAAASUVORK5CYII=");background-position: 2px center;}.ace_dark .ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAJFBMVEUAAAChoaGAgIAqKiq+vr6tra1ZWVmUlJSbm5s8PDxubm56enrdgzg3AAAAAXRSTlMAQObYZgAAAClJREFUeNpjYMAPdsMYHegyJZFQBlsUlMFVCWUYKkAZMxZAGdxlDMQBAG+TBP4B6RyJAAAAAElFTkSuQmCC");}.ace_scrollbar {contain: strict;position: absolute;right: 0;bottom: 0;z-index: 6;}.ace_scrollbar-inner {position: absolute;cursor: text;left: 0;top: 0;}.ace_scrollbar-v{overflow-x: hidden;overflow-y: scroll;top: 0;}.ace_scrollbar-h {overflow-x: scroll;overflow-y: hidden;left: 0;}.ace_print-margin {position: absolute;height: 100%;}.ace_text-input {position: absolute;z-index: 0;width: 0.5em;height: 1em;opacity: 0;background: transparent;-moz-appearance: none;appearance: none;border: none;resize: none;outline: none;overflow: hidden;font: inherit;padding: 0 1px;margin: 0 -1px;contain: strict;-ms-user-select: text;-moz-user-select: text;-webkit-user-select: text;user-select: text;white-space: pre!important;}.ace_text-input.ace_composition {background: transparent;color: inherit;z-index: 1000;opacity: 1;}.ace_composition_placeholder { color: transparent }.ace_composition_marker { border-bottom: 1px solid;position: absolute;border-radius: 0;margin-top: 1px;}[ace_nocontext=true] {transform: none!important;filter: none!important;clip-path: none!important;mask : none!important;contain: none!important;perspective: none!important;mix-blend-mode: initial!important;z-index: auto;}.ace_layer {z-index: 1;position: absolute;overflow: hidden;word-wrap: normal;white-space: pre;height: 100%;width: 100%;box-sizing: border-box;pointer-events: none;}.ace_gutter-layer {position: relative;width: auto;text-align: right;pointer-events: auto;height: 1000000px;contain: style size layout;}.ace_text-layer {font: inherit !important;position: absolute;height: 1000000px;width: 1000000px;contain: style size layout;}.ace_text-layer > .ace_line, .ace_text-layer > .ace_line_group {contain: style size layout;position: absolute;top: 0;left: 0;right: 0;}.ace_hidpi .ace_text-layer,.ace_hidpi .ace_gutter-layer,.ace_hidpi .ace_content,.ace_hidpi .ace_gutter {contain: strict;will-change: transform;}.ace_hidpi .ace_text-layer > .ace_line, .ace_hidpi .ace_text-layer > .ace_line_group {contain: strict;}.ace_cjk {display: inline-block;text-align: center;}.ace_cursor-layer {z-index: 4;}.ace_cursor {z-index: 4;position: absolute;box-sizing: border-box;border-left: 2px solid;transform: translatez(0);}.ace_multiselect .ace_cursor {border-left-width: 1px;}.ace_slim-cursors .ace_cursor {border-left-width: 1px;}.ace_overwrite-cursors .ace_cursor {border-left-width: 0;border-bottom: 1px solid;}.ace_hidden-cursors .ace_cursor {opacity: 0.2;}.ace_hasPlaceholder .ace_hidden-cursors .ace_cursor {opacity: 0;}.ace_smooth-blinking .ace_cursor {transition: opacity 0.18s;}.ace_animate-blinking .ace_cursor {animation-duration: 1000ms;animation-timing-function: step-end;animation-name: blink-ace-animate;animation-iteration-count: infinite;}.ace_animate-blinking.ace_smooth-blinking .ace_cursor {animation-duration: 1000ms;animation-timing-function: ease-in-out;animation-name: blink-ace-animate-smooth;}@keyframes blink-ace-animate {from, to { opacity: 1; }60% { opacity: 0; }}@keyframes blink-ace-animate-smooth {from, to { opacity: 1; }45% { opacity: 1; }60% { opacity: 0; }85% { opacity: 0; }}.ace_marker-layer .ace_step, .ace_marker-layer .ace_stack {position: absolute;z-index: 3;}.ace_marker-layer .ace_selection {position: absolute;z-index: 5;}.ace_marker-layer .ace_bracket {position: absolute;z-index: 6;}.ace_marker-layer .ace_error_bracket {position: absolute;border-bottom: 1px solid #DE5555;border-radius: 0;}.ace_marker-layer .ace_active-line {position: absolute;z-index: 2;}.ace_marker-layer .ace_selected-word {position: absolute;z-index: 4;box-sizing: border-box;}.ace_line .ace_fold {box-sizing: border-box;display: inline-block;height: 11px;margin-top: -2px;vertical-align: middle;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACJJREFUeNpi+P//fxgTAwPDBxDxD078RSX+YeEyDFMCIMAAI3INmXiwf2YAAAAASUVORK5CYII=");background-repeat: no-repeat, repeat-x;background-position: center center, top left;color: transparent;border: 1px solid black;border-radius: 2px;cursor: pointer;pointer-events: auto;}.ace_dark .ace_fold {}.ace_fold:hover{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACBJREFUeNpi+P//fz4TAwPDZxDxD5X4i5fLMEwJgAADAEPVDbjNw87ZAAAAAElFTkSuQmCC");}.ace_tooltip {background-color: #FFF;background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));border: 1px solid gray;border-radius: 1px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);color: black;max-width: 100%;padding: 3px 4px;position: fixed;z-index: 999999;box-sizing: border-box;cursor: default;white-space: pre;word-wrap: break-word;line-height: normal;font-style: normal;font-weight: normal;letter-spacing: normal;pointer-events: none;}.ace_folding-enabled > .ace_gutter-cell {padding-right: 13px;}.ace_fold-widget {box-sizing: border-box;margin: 0 -12px 0 1px;display: none;width: 11px;vertical-align: top;background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42mWKsQ0AMAzC8ixLlrzQjzmBiEjp0A6WwBCSPgKAXoLkqSot7nN3yMwR7pZ32NzpKkVoDBUxKAAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: center;border-radius: 3px;border: 1px solid transparent;cursor: pointer;}.ace_folding-enabled .ace_fold-widget {display: inline-block;   }.ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42m3HwQkAMAhD0YzsRchFKI7sAikeWkrxwScEB0nh5e7KTPWimZki4tYfVbX+MNl4pyZXejUO1QAAAABJRU5ErkJggg==");}.ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAGCAYAAAAG5SQMAAAAOUlEQVR42jXKwQkAMAgDwKwqKD4EwQ26sSOkVWjgIIHAzPiCgaqiqnJHZnKICBERHN194O5b9vbLuAVRL+l0YWnZAAAAAElFTkSuQmCCXA==");}.ace_fold-widget:hover {border: 1px solid rgba(0, 0, 0, 0.3);background-color: rgba(255, 255, 255, 0.2);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);}.ace_fold-widget:active {border: 1px solid rgba(0, 0, 0, 0.4);background-color: rgba(0, 0, 0, 0.05);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);}.ace_dark .ace_fold-widget {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHklEQVQIW2P4//8/AzoGEQ7oGCaLLAhWiSwB146BAQCSTPYocqT0AAAAAElFTkSuQmCC");}.ace_dark .ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAH0lEQVQIW2P4//8/AxQ7wNjIAjDMgC4AxjCVKBirIAAF0kz2rlhxpAAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAHElEQVQIW2P4//+/AxAzgDADlOOAznHAKgPWAwARji8UIDTfQQAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget:hover {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);background-color: rgba(255, 255, 255, 0.1);}.ace_dark .ace_fold-widget:active {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);}.ace_inline_button {border: 1px solid lightgray;display: inline-block;margin: -1px 8px;padding: 0 5px;pointer-events: auto;cursor: pointer;}.ace_inline_button:hover {border-color: gray;background: rgba(200,200,200,0.2);display: inline-block;pointer-events: auto;}.ace_fold-widget.ace_invalid {background-color: #FFB4B4;border-color: #DE5555;}.ace_fade-fold-widgets .ace_fold-widget {transition: opacity 0.4s ease 0.05s;opacity: 0;}.ace_fade-fold-widgets:hover .ace_fold-widget {transition: opacity 0.05s ease 0.05s;opacity:1;}.ace_underline {text-decoration: underline;}.ace_bold {font-weight: bold;}.ace_nobold .ace_bold {font-weight: normal;}.ace_italic {font-style: italic;}.ace_error-marker {background-color: rgba(255, 0, 0,0.2);position: absolute;z-index: 9;}.ace_highlight-marker {background-color: rgba(255, 255, 0,0.2);position: absolute;z-index: 8;}.ace_mobile-menu {position: absolute;line-height: 1.5;border-radius: 4px;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;background: white;box-shadow: 1px 3px 2px grey;border: 1px solid #dcdcdc;color: black;}.ace_dark > .ace_mobile-menu {background: #333;color: #ccc;box-shadow: 1px 3px 2px grey;border: 1px solid #444;}.ace_mobile-button {padding: 2px;cursor: pointer;overflow: hidden;}.ace_mobile-button:hover {background-color: #eee;opacity:1;}.ace_mobile-button:active {background-color: #ddd;}.ace_placeholder {font-family: arial;transform: scale(0.9);transform-origin: left;white-space: pre;opacity: 0.7;margin: 0 10px;}
+/*# sourceURL=ace/css/ace_editor.css */</style><link rel="stylesheet" href="r01_files/index.884876bb.css"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title></title></head><body> <div id="root"><div class="App"><main role="main" class="w-100"><div class="PageDataConsole"><div class="navbar flex-column flex-md-nonwrap shadow w-100 px-3 py-2"><div class="d-flex justify-content-between w-100"><div class="d-flex align-items-center flex-grow-0"><a class="mr-3" href="#/"><svg class="feather"><use xlink:href="http://127.0.0.1:8060/feather-sprite.fd1db7f3.svg#grid"></use></svg></a><a class="mr-3" href="#/overview/51d5daaddd12f7f4256aae3190432d5b"><svg class="feather"><use xlink:href="http://127.0.0.1:8060/feather-sprite.fd1db7f3.svg#bar-chart-2"></use></svg></a><a class="mr-3" href="#/console/51d5daaddd12f7f4256aae3190432d5b"><svg class="feather"><use xlink:href="http://127.0.0.1:8060/feather-sprite.fd1db7f3.svg#anchor"></use></svg></a></div><div class="flex-grow-1 text-center">Scripting console</div></div></div><div class="main"><div class="editor-pane"><div id="code-editor" style="width: 500px; height: 500px; font-size: 12px;" class=" ace_editor ace_hidpi ace-tm"><textarea class="ace_text-input" wrap="off" autocorrect="off" autocapitalize="none" spellcheck="false" style="opacity: 0; font-size: 1px; height: 1px; width: 1px; transform: translate(109px, 52px);"></textarea><div class="ace_gutter" aria-hidden="true" style="left: 0px; width: 45px;"><div class="ace_layer ace_gutter-layer ace_folding-enabled" style="height: 1000000px; transform: translate(0px); width: 45px;"><div class="ace_gutter-cell " style="height: 13px; top: 0px;">1<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 13px;">2<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 26px;">3<span style="display: none;"></span></div><div class="ace_gutter-cell ace_gutter-active-line " style="height: 13px; top: 39px;">4<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 52px;">5<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 65px;">6<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 78px;">7<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 91px;">8<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 104px;">9<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 117px;">10<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 130px;">11<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 143px;">12<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 156px;">13<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 169px;">14<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 182px;">15<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 195px;">16<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 208px;">17<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 221px;">18<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 234px;">19<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 247px;">20<span style="display: none;"></span></div><div class="ace_gutter-cell " style="height: 13px; top: 260px;">21<span style="display: none;"></span></div></div></div><div class="ace_scroller" style="line-height: 13px; left: 45px; right: 0px; bottom: 0px;"><div class="ace_content" style="transform: translate(0px); width: 1551px; height: 282px;"><div class="ace_layer ace_print-margin-layer"><div class="ace_print-margin" style="left: 484px; visibility: visible;"></div></div><div class="ace_layer ace_marker-layer"><div style="height: 13px; top: 39px; left: 0px; right: 0px;" class="ace_active-line"></div></div><div class="ace_layer ace_text-layer" style="height: 1000000px; margin: 0px 4px; transform: translate(0px);"><div style="height: 13px; top: 0px;" class="ace_line">fn analyze_group(i,list) {</div><div style="height: 13px; top: 13px;" class="ace_line">    let list_all = allocations().only_matching_backtraces(list);</div><div style="height: 13px; top: 26px;" class="ace_line"></div><div style="height: 13px; top: 39px;" class="ace_line">    println("GROUP: {}", i);</div><div style="height: 13px; top: 52px;" class="ace_line">    println("Total: {}", list_all.len());</div><div style="height: 13px; top: 65px;" class="ace_line">    println("Leaked: {}", list_all.only_leaked().len());</div><div style="height: 13px; top: 78px;" class="ace_line">    println();</div><div style="height: 13px; top: 91px;" class="ace_line">    println("Backtrace:");</div><div style="height: 13px; top: 104px;" class="ace_line">    println(list_all[0].backtrace().strip());</div><div style="height: 13px; top: 117px;" class="ace_line"></div><div style="height: 13px; top: 130px;" class="ace_line">    graph()</div><div style="height: 13px; top: 143px;" class="ace_line"><span class="ace_indent-guide">    </span>    .add("Leaked", list_all.only_leaked())</div><div style="height: 13px; top: 156px;" class="ace_line"><span class="ace_indent-guide">    </span>    .add("Temporary", list_all)</div><div style="height: 13px; top: 169px;" class="ace_line"><span class="ace_indent-guide">    </span>    .save("graph"+i+".svg");</div><div style="height: 13px; top: 182px;" class="ace_line"></div><div style="height: 13px; top: 195px;" class="ace_line">    println("--------------------------------------------------------------------------------");</div><div style="height: 13px; top: 208px;" class="ace_line">}</div><div style="height: 13px; top: 221px;" class="ace_line"></div><div style="height: 13px; top: 234px;" class="ace_line"></div><div style="height: 13px; top: 247px;" class="ace_line">graph().add(allocations()).save();</div><div style="height: 13px; top: 260px;" class="ace_line">graph().add("Leaked", allocations().only_leaked()).add("Temporary", allocations()).save();</div></div><div class="ace_layer ace_marker-layer"></div><div class="ace_layer ace_cursor-layer ace_hidden-cursors"><div class="ace_cursor" style="display: block; transform: translate(64px, 39px); width: 6px; height: 13px;"></div></div></div></div><div class="ace_scrollbar ace_scrollbar-v" style="width: 20px; bottom: 0px;"><div class="ace_scrollbar-inner" style="width: 20px; height: 390px;">&nbsp;</div></div><div class="ace_scrollbar ace_scrollbar-h" style="display: none; height: 20px; left: 45px; right: 0px;"><div class="ace_scrollbar-inner" style="height: 20px; width: 1596px;">&nbsp;</div></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font: inherit; overflow: hidden;"><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font: inherit; overflow: visible;">הההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההה</div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; font-size-adjust: inherit; font-kerning: inherit; font-optical-sizing: inherit; font-language-override: inherit; font-feature-settings: inherit; font-variation-settings: inherit; overflow: visible;">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div></div></div>,<br><div class="d-flex justify-content-between"><button type="button" style="min-width: 8em;" class="ml-2 btn-sm btn btn-outline-primary">Run</button><button type="button" class="ml-2 btn-sm btn btn-outline-dark">Copy script to clipboard</button></div></div><div><h1 class="h3">Output</h1><br><div class="output-body"><div class="script-file"><div>/Graph #1.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/b5ba0e2fe3585ffadb72df245d0f05f9/Graph%20#1.svg" target="_blank"><img src="r01_files/Graph%2520_002.svg"></a></div><div class="script-file"><div>/Graph #2.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/04ffc2ef59ee51e98035071a5d14c3af/Graph%20#2.svg" target="_blank"><img src="r01_files/Graph%20.svg"></a></div><div class="println">GROUP: 0</div><div class="println">Total: 9</div><div class="println">Leaked: 1</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] core::ptr::drop_in_place&lt;sc_client_db::record_stats_state::RecordStatsState&lt;sc_client_db::RefTrackingState&lt;sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;,sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;&gt;
+#19 [polkadot-parachain] core::ptr::drop_in_place&lt;sc_client_db::RefTrackingState&lt;sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;&gt;
+#20 [polkadot-parachain] core::ptr::drop_in_place&lt;sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;alloc::sync::Arc&lt;dyn sp_state_machine::trie_backend_essence::Storage&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;,sp_runtime::traits::BlakeTwo256,sp_trie::cache::LocalTrieCache&lt;sp_runtime::traits::BlakeTwo256&gt;,sp_trie::recorder::Recorder&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#21 [polkadot-parachain] core::ptr::drop_in_place&lt;core::option::Option&lt;sp_trie::cache::LocalTrieCache&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#22 [polkadot-parachain] schnellru::LruMap&lt;K,V,L,S&gt;::try_grow_and_insert
+#23 [polkadot-parachain] schnellru::LruMap&lt;K,V,L,S&gt;::try_grow
+#24 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph0.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/7cda748998860e5402d585c09a2a1f61/graph0.svg" target="_blank"><img src="r01_files/graph0.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 1</div><div class="println">Total: 134254</div><div class="println">Leaked: 8319</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;sc_client_db::Backend&lt;Block&gt; as sc_client_api::backend::Backend&lt;Block&gt;&gt;::commit_operation
+#15 [polkadot-parachain] sc_client_db::Backend&lt;Block&gt;::try_commit_operation
+#16 [polkadot-parachain] sc_client_db::children::read_children
+#17 [polkadot-parachain] &lt;sp_database::kvdb::DbAdapter&lt;D&gt; as sp_database::Database&lt;H&gt;&gt;::get
+#18 [polkadot-parachain] kvdb_rocksdb::Database::get
+#19 [polkadot-parachain] rocksdb_get_pinned_cf
+#20 [polkadot-parachain] rocksdb::DBImpl::Get(rocksdb::ReadOptions const&amp;, rocksdb::ColumnFamilyHandle*, rocksdb::Slice const&amp;, rocksdb::PinnableSlice*)
+#21 [polkadot-parachain] rocksdb::DBImpl::Get(rocksdb::ReadOptions const&amp;, rocksdb::ColumnFamilyHandle*, rocksdb::Slice const&amp;, rocksdb::PinnableSlice*, std::string*)
+#22 [polkadot-parachain] rocksdb::DBImpl::GetImpl(rocksdb::ReadOptions const&amp;, rocksdb::Slice const&amp;, rocksdb::DBImpl::GetImplOptions&amp;)
+#23 [polkadot-parachain] rocksdb::Version::Get(rocksdb::ReadOptions const&amp;, rocksdb::LookupKey const&amp;, rocksdb::PinnableSlice*, rocksdb::PinnableWideColumns*, std::string*, rocksdb::Status*, rocksdb::MergeContext*, unsigned long*, rocksdb::PinnedIteratorsManager*, bool*, bool*, unsigned long*, rocksdb::ReadCallback*, bool*, bool)
+#24 [polkadot-parachain] rocksdb::TableCache::Get(rocksdb::ReadOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::Slice const&amp;, rocksdb::GetContext*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, rocksdb::HistogramImpl*, bool, int, unsigned long)
+#25 [polkadot-parachain] rocksdb::BlockBasedTable::Get(rocksdb::ReadOptions const&amp;, rocksdb::Slice const&amp;, rocksdb::GetContext*, rocksdb::SliceTransform const*, bool)
+#26 [polkadot-parachain] rocksdb::DataBlockIter* rocksdb::BlockBasedTable::NewDataBlockIterator&lt;rocksdb::DataBlockIter&gt;(rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::DataBlockIter*, rocksdb::BlockType, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::FilePrefetchBuffer*, bool, bool, rocksdb::Status&amp;) const
+#27 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kData::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::RetrieveBlock&lt;rocksdb::Block_kData&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, rocksdb::CachableEntry&lt;rocksdb::Block_kData&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, bool, bool, bool) const
+#28 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kData::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::MaybeReadBlockAndLoadToCache&lt;rocksdb::Block_kData&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, bool, rocksdb::CachableEntry&lt;rocksdb::Block_kData&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::BlockContents*, bool) const
+#29 [polkadot-parachain] rocksdb::BlockFetcher::ReadBlockContents()
+#30 [polkadot-parachain] rocksdb::BlockFetcher::PrepareBufferForBlockFromFile()
+#31 [libstdc++.so.6.0.30] operator new(unsigned long)
+#32 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph1.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/31ef613b567150fb88925ad98175b16f/graph1.svg" target="_blank"><img src="r01_files/graph1.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 2</div><div class="println">Total: 8</div><div class="println">Leaked: 1</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] core::ptr::drop_in_place&lt;sc_client_db::record_stats_state::RecordStatsState&lt;sc_client_db::RefTrackingState&lt;sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;,sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;&gt;
+#19 [polkadot-parachain] core::ptr::drop_in_place&lt;sc_client_db::RefTrackingState&lt;sp_runtime::generic::block::Block&lt;sp_runtime::generic::header::Header&lt;u32,sp_runtime::traits::BlakeTwo256&gt;,sp_runtime::OpaqueExtrinsic&gt;&gt;&gt;
+#20 [polkadot-parachain] core::ptr::drop_in_place&lt;sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;alloc::sync::Arc&lt;dyn sp_state_machine::trie_backend_essence::Storage&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;,sp_runtime::traits::BlakeTwo256,sp_trie::cache::LocalTrieCache&lt;sp_runtime::traits::BlakeTwo256&gt;,sp_trie::recorder::Recorder&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#21 [polkadot-parachain] core::ptr::drop_in_place&lt;core::option::Option&lt;sp_trie::cache::LocalTrieCache&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#22 [polkadot-parachain] schnellru::LruMap&lt;K,V,L,S&gt;::try_grow_and_insert
+#23 [polkadot-parachain] schnellru::LruMap&lt;K,V,L,S&gt;::try_grow
+#24 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph2.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/db48f78329e60a4874e8c879a0d1ce2a/graph2.svg" target="_blank"><img src="r01_files/graph2.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 3</div><div class="println">Total: 131171</div><div class="println">Leaked: 7734</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::check_block::{{closure}}
+#10 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::check_block::{{closure}}
+#11 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::check_block::{{closure}}
+#12 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::check_block::{{closure}}
+#13 [polkadot-parachain] sc_service::client::client::Client&lt;B,E,Block,RA&gt;::block_status
+#14 [polkadot-parachain] &lt;sc_client_db::BlockchainDb&lt;Block&gt; as sp_blockchain::header_metadata::HeaderMetadata&lt;Block&gt;&gt;::header_metadata
+#15 [polkadot-parachain] &lt;sc_client_db::BlockchainDb&lt;Block&gt; as sp_blockchain::backend::HeaderBackend&lt;Block&gt;&gt;::header
+#16 [polkadot-parachain] sc_client_db::utils::read_header
+#17 [polkadot-parachain] &lt;sp_database::kvdb::DbAdapter&lt;D&gt; as sp_database::Database&lt;H&gt;&gt;::get
+#18 [polkadot-parachain] kvdb_rocksdb::Database::get
+#19 [polkadot-parachain] rocksdb_get_pinned_cf
+#20 [polkadot-parachain] rocksdb::DBImpl::Get(rocksdb::ReadOptions const&amp;, rocksdb::ColumnFamilyHandle*, rocksdb::Slice const&amp;, rocksdb::PinnableSlice*)
+#21 [polkadot-parachain] rocksdb::DBImpl::Get(rocksdb::ReadOptions const&amp;, rocksdb::ColumnFamilyHandle*, rocksdb::Slice const&amp;, rocksdb::PinnableSlice*, std::string*)
+#22 [polkadot-parachain] rocksdb::DBImpl::GetImpl(rocksdb::ReadOptions const&amp;, rocksdb::Slice const&amp;, rocksdb::DBImpl::GetImplOptions&amp;)
+#23 [polkadot-parachain] rocksdb::Version::Get(rocksdb::ReadOptions const&amp;, rocksdb::LookupKey const&amp;, rocksdb::PinnableSlice*, rocksdb::PinnableWideColumns*, std::string*, rocksdb::Status*, rocksdb::MergeContext*, unsigned long*, rocksdb::PinnedIteratorsManager*, bool*, bool*, unsigned long*, rocksdb::ReadCallback*, bool*, bool)
+#24 [polkadot-parachain] rocksdb::TableCache::Get(rocksdb::ReadOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::Slice const&amp;, rocksdb::GetContext*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, rocksdb::HistogramImpl*, bool, int, unsigned long)
+#25 [polkadot-parachain] rocksdb::BlockBasedTable::Get(rocksdb::ReadOptions const&amp;, rocksdb::Slice const&amp;, rocksdb::GetContext*, rocksdb::SliceTransform const*, bool)
+#26 [polkadot-parachain] rocksdb::DataBlockIter* rocksdb::BlockBasedTable::NewDataBlockIterator&lt;rocksdb::DataBlockIter&gt;(rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::DataBlockIter*, rocksdb::BlockType, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::FilePrefetchBuffer*, bool, bool, rocksdb::Status&amp;) const
+#27 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kData::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::RetrieveBlock&lt;rocksdb::Block_kData&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, rocksdb::CachableEntry&lt;rocksdb::Block_kData&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, bool, bool, bool) const
+#28 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kData::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::MaybeReadBlockAndLoadToCache&lt;rocksdb::Block_kData&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, bool, rocksdb::CachableEntry&lt;rocksdb::Block_kData&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::BlockContents*, bool) const
+#29 [polkadot-parachain] rocksdb::BlockFetcher::ReadBlockContents()
+#30 [polkadot-parachain] rocksdb::UncompressSerializedBlock(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, rocksdb::BlockContents*, unsigned int, rocksdb::ImmutableOptions const&amp;, rocksdb::MemoryAllocator*)
+#31 [polkadot-parachain] rocksdb::UncompressBlockData(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, rocksdb::BlockContents*, unsigned int, rocksdb::ImmutableOptions const&amp;, rocksdb::MemoryAllocator*)
+#32 [polkadot-parachain] rocksdb::UncompressData(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, unsigned long*, unsigned int, rocksdb::MemoryAllocator*)
+#33 [polkadot-parachain] rocksdb::Snappy_Uncompress(char const*, unsigned long, unsigned long*, rocksdb::MemoryAllocator*)
+#34 [libstdc++.so.6.0.30] operator new(unsigned long)
+#35 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph3.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/e18dabfc41817013692ab9100b2f2f9e/graph3.svg" target="_blank"><img src="r01_files/graph3.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 4</div><div class="println">Total: 14362</div><div class="println">Leaked: 14362</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#40 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#42 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#43 [polkadot-parachain] trie_db::triedbmut::Value&lt;L&gt;::into_encoded
+#44 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#45 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_value
+#46 [polkadot-parachain] &lt;trie_db::Bytes as core::convert::From&lt;&amp;[u8]&gt;&gt;::from
+#47 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph4.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/a80e580e1f7148a305387725b6527125/graph4.svg" target="_blank"><img src="r01_files/graph4.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 5</div><div class="println">Total: 7343</div><div class="println">Leaked: 576</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [libstdc++.so.6.0.30] 71c9132dc252
+#03 [polkadot-parachain] rocksdb::ThreadPoolImpl::Impl::BGThreadWrapper(void*)
+#04 [polkadot-parachain] rocksdb::ThreadPoolImpl::Impl::BGThread(unsigned long)
+#05 [polkadot-parachain] rocksdb::DBImpl::BGWorkCompaction(void*)
+#06 [polkadot-parachain] rocksdb::DBImpl::BackgroundCallCompaction(rocksdb::DBImpl::PrepickedCompaction*, rocksdb::Env::Priority)
+#07 [polkadot-parachain] rocksdb::DBImpl::BackgroundCompaction(bool*, rocksdb::JobContext*, rocksdb::LogBuffer*, rocksdb::DBImpl::PrepickedCompaction*, rocksdb::Env::Priority)
+#08 [polkadot-parachain] rocksdb::CompactionJob::Run()
+#09 [polkadot-parachain] rocksdb::CompactionJob::Run()::$_2::operator()(rocksdb::Status&amp;) const
+#10 [polkadot-parachain] rocksdb::TableCache::NewIterator(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::RangeDelAggregator*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, rocksdb::TableReader**, rocksdb::HistogramImpl*, rocksdb::TableReaderCaller, rocksdb::Arena*, bool, int, unsigned long, rocksdb::InternalKey const*, rocksdb::InternalKey const*, bool, rocksdb::TruncatedRangeDelIterator**)
+#11 [polkadot-parachain] rocksdb::TableCache::FindTable(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::BasicTypedCacheInterface&lt;rocksdb::TableReader, (rocksdb::CacheEntryRole)13, rocksdb::Cache*&gt;::TypedHandle**, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, bool, rocksdb::HistogramImpl*, bool, int, bool, unsigned long, rocksdb::Temperature)
+#12 [polkadot-parachain] rocksdb::TableCache::GetTableReader(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, bool, bool, rocksdb::HistogramImpl*, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, int, bool, unsigned long, rocksdb::Temperature)
+#13 [polkadot-parachain] rocksdb::BlockBasedTableFactory::NewTableReader(rocksdb::ReadOptions const&amp;, rocksdb::TableReaderOptions const&amp;, std::unique_ptr&lt;rocksdb::RandomAccessFileReader, std::default_delete&lt;rocksdb::RandomAccessFileReader&gt;&gt;&amp;&amp;, unsigned long, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, bool) const
+#14 [polkadot-parachain] rocksdb::BlockBasedTable::Open(rocksdb::ReadOptions const&amp;, rocksdb::ImmutableOptions const&amp;, rocksdb::EnvOptions const&amp;, rocksdb::BlockBasedTableOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, std::unique_ptr&lt;rocksdb::RandomAccessFileReader, std::default_delete&lt;rocksdb::RandomAccessFileReader&gt;&gt;&amp;&amp;, unsigned long, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, std::shared_ptr&lt;rocksdb::CacheReservationManager&gt;, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, bool, int, bool, unsigned long, bool, rocksdb::TailPrefetchStats*, rocksdb::BlockCacheTracer*, unsigned long, std::string const&amp;, unsigned long, std::array&lt;unsigned long, (unsigned long)2&gt;)
+#15 [polkadot-parachain] rocksdb::BlockBasedTable::PrefetchIndexAndFilterBlocks(rocksdb::ReadOptions const&amp;, rocksdb::FilePrefetchBuffer*, rocksdb::InternalIteratorBase&lt;rocksdb::Slice&gt;*, rocksdb::BlockBasedTable*, bool, rocksdb::BlockBasedTableOptions const&amp;, int, unsigned long, unsigned long, rocksdb::BlockCacheLookupContext*)
+#16 [polkadot-parachain] rocksdb::FullFilterBlockReader::Create(rocksdb::BlockBasedTable const*, rocksdb::ReadOptions const&amp;, rocksdb::FilePrefetchBuffer*, bool, bool, bool, rocksdb::BlockCacheLookupContext*)
+#17 [polkadot-parachain] rocksdb::FilterBlockReaderCommon&lt;rocksdb::ParsedFullFilterBlock&gt;::ReadFilterBlock(rocksdb::BlockBasedTable const*, rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, bool, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::CachableEntry&lt;rocksdb::ParsedFullFilterBlock&gt;*)
+#18 [polkadot-parachain] std::enable_if&lt;((rocksdb::ParsedFullFilterBlock::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::RetrieveBlock&lt;rocksdb::ParsedFullFilterBlock&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, rocksdb::CachableEntry&lt;rocksdb::ParsedFullFilterBlock&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, bool, bool, bool) const
+#19 [polkadot-parachain] std::enable_if&lt;((rocksdb::ParsedFullFilterBlock::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::MaybeReadBlockAndLoadToCache&lt;rocksdb::ParsedFullFilterBlock&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, bool, rocksdb::CachableEntry&lt;rocksdb::ParsedFullFilterBlock&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::BlockContents*, bool) const
+#20 [polkadot-parachain] rocksdb::BlockFetcher::ReadBlockContents()
+#21 [polkadot-parachain] rocksdb::BlockFetcher::PrepareBufferForBlockFromFile()
+#22 [libstdc++.so.6.0.30] operator new(unsigned long)
+#23 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph5.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/d24280bdcdf7007d97f47920875b30fa/graph5.svg" target="_blank"><img src="r01_files/graph5.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 6</div><div class="println">Total: 190</div><div class="println">Leaked: 37</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] cumulus_client_consensus_common::parachain_consensus::run_parachain_consensus::{{closure}}::{{closure}}::{{closure}}
+#08 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_client_api::backend::Finalizer&lt;Block,B&gt;&gt;::finalize_block
+#09 [polkadot-parachain] &lt;sc_client_db::Backend&lt;Block&gt; as sc_client_api::backend::Backend&lt;Block&gt;&gt;::commit_operation
+#10 [polkadot-parachain] sc_client_db::Backend&lt;Block&gt;::try_commit_operation
+#11 [polkadot-parachain] &lt;sp_database::kvdb::DbAdapter&lt;D&gt; as sp_database::Database&lt;H&gt;&gt;::commit
+#12 [polkadot-parachain] kvdb_rocksdb::Database::write
+#13 [polkadot-parachain] rocksdb_write
+#14 [polkadot-parachain] rocksdb::DBImpl::Write(rocksdb::WriteOptions const&amp;, rocksdb::WriteBatch*)
+#15 [polkadot-parachain] rocksdb::DBImpl::WriteImpl(rocksdb::WriteOptions const&amp;, rocksdb::WriteBatch*, rocksdb::WriteCallback*, unsigned long*, unsigned long, bool, unsigned long*, unsigned long, rocksdb::PreReleaseCallback*, rocksdb::PostMemTableCallback*)
+#16 [polkadot-parachain] rocksdb::WriteBatchInternal::InsertInto(rocksdb::WriteThread::WriteGroup&amp;, unsigned long, rocksdb::ColumnFamilyMemTables*, rocksdb::FlushScheduler*, rocksdb::TrimHistoryScheduler*, bool, unsigned long, rocksdb::DB*, bool, bool, bool)
+#17 [polkadot-parachain] rocksdb::WriteBatchInternal::Iterate(rocksdb::WriteBatch const*, rocksdb::WriteBatch*::Handler, unsigned long, unsigned long)
+#18 [polkadot-parachain] rocksdb::(anonymous namespace)::MemTableInserter::PutCF(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;)
+#19 [polkadot-parachain] rocksdb::(anonymous namespace)::MemTableInserter::PutCFImpl(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, rocksdb::ValueType, rocksdb::ProtectionInfoKVOS&lt;unsigned long&gt; const*)
+#20 [polkadot-parachain] rocksdb::MemTable::Add(unsigned long, rocksdb::ValueType, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, rocksdb::ProtectionInfoKVOS&lt;unsigned long&gt; const*, bool, rocksdb::MemTablePostProcessInfo*, void**)
+#21 [polkadot-parachain] rocksdb::(anonymous namespace)::SkipListRep::Allocate(unsigned long, char**)
+#22 [polkadot-parachain] rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)
+#23 [polkadot-parachain] char* rocksdb::ConcurrentArena::AllocateImpl&lt;rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::{lambda()#1}&gt;(unsigned long, bool, rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::{lambda()#1} const&amp;)
+#24 [polkadot-parachain] rocksdb::Arena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)
+#25 [polkadot-parachain] rocksdb::Arena::AllocateNewBlock(unsigned long)
+#26 [libstdc++.so.6.0.30] operator new(unsigned long)
+#27 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph6.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/f73538d194aee1d36361b7dafbe1c093/graph6.svg" target="_blank"><img src="r01_files/graph6.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 7</div><div class="println">Total: 78239</div><div class="println">Leaked: 78239</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#38 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#40 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#41 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph7.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/872e7276df419866b3dd060a6a3062ee/graph7.svg" target="_blank"><img src="r01_files/graph7.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 8</div><div class="println">Total: 94024</div><div class="println">Leaked: 94024</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#40 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#42 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#43 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph8.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/cdda06236840cd42e208b5cab98a03ea/graph8.svg" target="_blank"><img src="r01_files/graph8.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 9</div><div class="println">Total: 65195</div><div class="println">Leaked: 65195</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#40 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#42 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#43 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#44 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#45 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph9.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/a1b553c49bcb03f26f389a4eb4a3ea99/graph9.svg" target="_blank"><img src="r01_files/graph9.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 10</div><div class="println">Total: 149</div><div class="println">Leaked: 20</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] cumulus_client_consensus_common::parachain_consensus::run_parachain_consensus::{{closure}}::{{closure}}::{{closure}}
+#08 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_client_api::backend::Finalizer&lt;Block,B&gt;&gt;::finalize_block
+#09 [polkadot-parachain] &lt;sc_client_db::Backend&lt;Block&gt; as sc_client_api::backend::Backend&lt;Block&gt;&gt;::commit_operation
+#10 [polkadot-parachain] sc_client_db::Backend&lt;Block&gt;::try_commit_operation
+#11 [polkadot-parachain] &lt;sp_database::kvdb::DbAdapter&lt;D&gt; as sp_database::Database&lt;H&gt;&gt;::commit
+#12 [polkadot-parachain] kvdb_rocksdb::Database::write
+#13 [polkadot-parachain] rocksdb_write
+#14 [polkadot-parachain] rocksdb::DBImpl::Write(rocksdb::WriteOptions const&amp;, rocksdb::WriteBatch*)
+#15 [polkadot-parachain] rocksdb::DBImpl::WriteImpl(rocksdb::WriteOptions const&amp;, rocksdb::WriteBatch*, rocksdb::WriteCallback*, unsigned long*, unsigned long, bool, unsigned long*, unsigned long, rocksdb::PreReleaseCallback*, rocksdb::PostMemTableCallback*)
+#16 [polkadot-parachain] rocksdb::WriteBatchInternal::InsertInto(rocksdb::WriteThread::WriteGroup&amp;, unsigned long, rocksdb::ColumnFamilyMemTables*, rocksdb::FlushScheduler*, rocksdb::TrimHistoryScheduler*, bool, unsigned long, rocksdb::DB*, bool, bool, bool)
+#17 [polkadot-parachain] rocksdb::WriteBatchInternal::Iterate(rocksdb::WriteBatch const*, rocksdb::WriteBatch*::Handler, unsigned long, unsigned long)
+#18 [polkadot-parachain] rocksdb::(anonymous namespace)::MemTableInserter::PutCF(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;)
+#19 [polkadot-parachain] rocksdb::(anonymous namespace)::MemTableInserter::PutCFImpl(unsigned int, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, rocksdb::ValueType, rocksdb::ProtectionInfoKVOS&lt;unsigned long&gt; const*)
+#20 [polkadot-parachain] rocksdb::MemTable::Add(unsigned long, rocksdb::ValueType, rocksdb::Slice const&amp;, rocksdb::Slice const&amp;, rocksdb::ProtectionInfoKVOS&lt;unsigned long&gt; const*, bool, rocksdb::MemTablePostProcessInfo*, void**)
+#21 [polkadot-parachain] rocksdb::(anonymous namespace)::SkipListRep::Allocate(unsigned long, char**)
+#22 [polkadot-parachain] rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)
+#23 [polkadot-parachain] char* rocksdb::ConcurrentArena::AllocateImpl&lt;rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::{lambda()#1}&gt;(unsigned long, bool, rocksdb::ConcurrentArena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)::{lambda()#1} const&amp;)
+#24 [polkadot-parachain] rocksdb::Arena::AllocateAligned(unsigned long, unsigned long, rocksdb::Logger*)
+#25 [polkadot-parachain] rocksdb::Arena::AllocateNewBlock(unsigned long)
+#26 [libstdc++.so.6.0.30] operator new(unsigned long)
+#27 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph10.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/956769c80d710ba878f506d7de00721d/graph10.svg" target="_blank"><img src="r01_files/graph10.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 11</div><div class="println">Total: 6961</div><div class="println">Leaked: 524</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [libstdc++.so.6.0.30] 71c9132dc252
+#03 [polkadot-parachain] rocksdb::ThreadPoolImpl::Impl::BGThreadWrapper(void*)
+#04 [polkadot-parachain] rocksdb::ThreadPoolImpl::Impl::BGThread(unsigned long)
+#05 [polkadot-parachain] rocksdb::DBImpl::BGWorkCompaction(void*)
+#06 [polkadot-parachain] rocksdb::DBImpl::BackgroundCallCompaction(rocksdb::DBImpl::PrepickedCompaction*, rocksdb::Env::Priority)
+#07 [polkadot-parachain] rocksdb::DBImpl::BackgroundCompaction(bool*, rocksdb::JobContext*, rocksdb::LogBuffer*, rocksdb::DBImpl::PrepickedCompaction*, rocksdb::Env::Priority)
+#08 [polkadot-parachain] rocksdb::CompactionJob::Run()
+#09 [polkadot-parachain] rocksdb::CompactionJob::Run()::$_2::operator()(rocksdb::Status&amp;) const
+#10 [polkadot-parachain] rocksdb::TableCache::NewIterator(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::RangeDelAggregator*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, rocksdb::TableReader**, rocksdb::HistogramImpl*, rocksdb::TableReaderCaller, rocksdb::Arena*, bool, int, unsigned long, rocksdb::InternalKey const*, rocksdb::InternalKey const*, bool, rocksdb::TruncatedRangeDelIterator**)
+#11 [polkadot-parachain] rocksdb::TableCache::FindTable(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, rocksdb::BasicTypedCacheInterface&lt;rocksdb::TableReader, (rocksdb::CacheEntryRole)13, rocksdb::Cache*&gt;::TypedHandle**, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, bool, rocksdb::HistogramImpl*, bool, int, bool, unsigned long, rocksdb::Temperature)
+#12 [polkadot-parachain] rocksdb::TableCache::GetTableReader(rocksdb::ReadOptions const&amp;, rocksdb::FileOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, rocksdb::FileMetaData const&amp;, bool, bool, rocksdb::HistogramImpl*, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, int, bool, unsigned long, rocksdb::Temperature)
+#13 [polkadot-parachain] rocksdb::BlockBasedTableFactory::NewTableReader(rocksdb::ReadOptions const&amp;, rocksdb::TableReaderOptions const&amp;, std::unique_ptr&lt;rocksdb::RandomAccessFileReader, std::default_delete&lt;rocksdb::RandomAccessFileReader&gt;&gt;&amp;&amp;, unsigned long, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, bool) const
+#14 [polkadot-parachain] rocksdb::BlockBasedTable::Open(rocksdb::ReadOptions const&amp;, rocksdb::ImmutableOptions const&amp;, rocksdb::EnvOptions const&amp;, rocksdb::BlockBasedTableOptions const&amp;, rocksdb::InternalKeyComparator const&amp;, std::unique_ptr&lt;rocksdb::RandomAccessFileReader, std::default_delete&lt;rocksdb::RandomAccessFileReader&gt;&gt;&amp;&amp;, unsigned long, std::unique_ptr&lt;rocksdb::TableReader, std::default_delete&lt;rocksdb::TableReader&gt;&gt;*, std::shared_ptr&lt;rocksdb::CacheReservationManager&gt;, std::shared_ptr&lt;rocksdb::SliceTransform const&gt; const&amp;, bool, bool, int, bool, unsigned long, bool, rocksdb::TailPrefetchStats*, rocksdb::BlockCacheTracer*, unsigned long, std::string const&amp;, unsigned long, std::array&lt;unsigned long, (unsigned long)2&gt;)
+#15 [polkadot-parachain] rocksdb::BlockBasedTable::PrefetchIndexAndFilterBlocks(rocksdb::ReadOptions const&amp;, rocksdb::FilePrefetchBuffer*, rocksdb::InternalIteratorBase&lt;rocksdb::Slice&gt;*, rocksdb::BlockBasedTable*, bool, rocksdb::BlockBasedTableOptions const&amp;, int, unsigned long, unsigned long, rocksdb::BlockCacheLookupContext*)
+#16 [polkadot-parachain] rocksdb::BlockBasedTable::CreateIndexReader(rocksdb::ReadOptions const&amp;, rocksdb::FilePrefetchBuffer*, rocksdb::InternalIteratorBase&lt;rocksdb::Slice&gt;*, bool, bool, bool, rocksdb::BlockCacheLookupContext*, std::unique_ptr&lt;rocksdb::BlockBasedTable::IndexReader, std::default_delete&lt;rocksdb::BlockBasedTable::IndexReader&gt;&gt;*)
+#17 [polkadot-parachain] rocksdb::BinarySearchIndexReader::Create(rocksdb::BlockBasedTable const*, rocksdb::ReadOptions const&amp;, rocksdb::FilePrefetchBuffer*, bool, bool, bool, rocksdb::BlockCacheLookupContext*, std::unique_ptr&lt;rocksdb::BlockBasedTable::IndexReader, std::default_delete&lt;rocksdb::BlockBasedTable::IndexReader&gt;&gt;*)
+#18 [polkadot-parachain] rocksdb::BlockBasedTable::IndexReaderCommon::ReadIndexBlock(rocksdb::BlockBasedTable const*, rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, bool, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::CachableEntry&lt;rocksdb::Block&gt;*)
+#19 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kIndex::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::RetrieveBlock&lt;rocksdb::Block_kIndex&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, rocksdb::CachableEntry&lt;rocksdb::Block_kIndex&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, bool, bool, bool) const
+#20 [polkadot-parachain] std::enable_if&lt;((rocksdb::Block_kIndex::kCacheEntryRole)==((rocksdb::CacheEntryRole)13))||(true), rocksdb::Status&gt;::type rocksdb::BlockBasedTable::MaybeReadBlockAndLoadToCache&lt;rocksdb::Block_kIndex&gt;(rocksdb::FilePrefetchBuffer*, rocksdb::ReadOptions const&amp;, rocksdb::BlockHandle const&amp;, rocksdb::UncompressionDict const&amp;, bool, rocksdb::CachableEntry&lt;rocksdb::Block_kIndex&gt;*, rocksdb::GetContext*, rocksdb::BlockCacheLookupContext*, rocksdb::BlockContents*, bool) const
+#21 [polkadot-parachain] rocksdb::BlockFetcher::ReadBlockContents()
+#22 [polkadot-parachain] rocksdb::UncompressSerializedBlock(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, rocksdb::BlockContents*, unsigned int, rocksdb::ImmutableOptions const&amp;, rocksdb::MemoryAllocator*)
+#23 [polkadot-parachain] rocksdb::UncompressBlockData(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, rocksdb::BlockContents*, unsigned int, rocksdb::ImmutableOptions const&amp;, rocksdb::MemoryAllocator*)
+#24 [polkadot-parachain] rocksdb::UncompressData(rocksdb::UncompressionInfo const&amp;, char const*, unsigned long, unsigned long*, unsigned int, rocksdb::MemoryAllocator*)
+#25 [polkadot-parachain] rocksdb::Snappy_Uncompress(char const*, unsigned long, unsigned long*, rocksdb::MemoryAllocator*)
+#26 [libstdc++.so.6.0.30] operator new(unsigned long)
+#27 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph11.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/f60e6d50ae070f6e44f0dbf29572d4ff/graph11.svg" target="_blank"><img src="r01_files/graph11.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 12</div><div class="println">Total: 20480</div><div class="println">Leaked: 20480</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#40 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#42 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#43 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#44 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#45 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#46 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#47 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#48 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#49 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph12.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/936aed462f89f1b93719e656989b53a4/graph12.svg" target="_blank"><img src="r01_files/graph12.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 13</div><div class="println">Total: 93784</div><div class="println">Leaked: 93784</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#40 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#42 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#43 [polkadot-parachain] trie_db::node::NodeHandle::to_owned_handle
+#44 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph13.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/fd5a9ce03bab0904ee973eccb506b57f/graph13.svg" target="_blank"><img src="r01_files/graph13.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="println">GROUP: 14</div><div class="println">Total: 20804</div><div class="println">Leaked: 20804</div><div class="println"></div><div class="println">Backtrace:</div><div class="println">#00 [libc.so.6] 71c912f2684f
+#01 [libc.so.6] 71c912e94ac2
+#02 [polkadot-parachain] std::sys::pal::unix::thread::Thread::new::thread_start
+#03 [polkadot-parachain] core::ops::function::FnOnce::call_once{{vtable.shim}}
+#04 [polkadot-parachain] std::sys::backtrace::__rust_begin_short_backtrace
+#05 [polkadot-parachain] tokio::runtime::task::raw::poll
+#06 [polkadot-parachain] &lt;tracing_futures::Instrumented&lt;T&gt; as core::future::future::Future&gt;::poll
+#07 [polkadot-parachain] &lt;futures_util::future::future::Map&lt;Fut,F&gt; as core::future::future::Future&gt;::poll
+#08 [polkadot-parachain] sc_consensus::import_queue::basic_queue::BlockImportWorker&lt;B&gt;::new::{{closure}}
+#09 [polkadot-parachain] sc_consensus::import_queue::import_single_block_metered::{{closure}}
+#10 [polkadot-parachain] &lt;alloc::boxed::Box&lt;dyn sc_consensus::block_import::BlockImport&lt;B&gt;+Error = sp_consensus::error::Error+core::marker::Send+core::marker::Sync&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#11 [polkadot-parachain] &lt;cumulus_client_consensus_common::ParachainBlockImport&lt;Block,BI,BE&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#12 [polkadot-parachain] &lt;alloc::sync::Arc&lt;T&gt; as sc_consensus::block_import::BlockImport&lt;B&gt;&gt;::import_block::{{closure}}
+#13 [polkadot-parachain] &lt;&amp;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sc_consensus::block_import::BlockImport&lt;Block&gt;&gt;::import_block::{{closure}}
+#14 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at
+#15 [polkadot-parachain] &lt;polkadot_omni_node_lib::fake_runtime_api::aura_sr25519::RuntimeApiImpl&lt;__SrApiBlock__,RuntimeApiImplCall&gt; as sp_api::Core&lt;__SrApiBlock__&gt;&gt;::__runtime_api_internal_call_api_at::{{closure}}
+#16 [polkadot-parachain] &lt;sc_service::client::client::Client&lt;B,E,Block,RA&gt; as sp_api::CallApiAt&lt;Block&gt;&gt;::call_api_at
+#17 [polkadot-parachain] &lt;sc_service::client::call_executor::LocalCallExecutor&lt;Block,B,E&gt; as sc_client_api::call_executor::CallExecutor&lt;Block&gt;&gt;::contextual_call
+#18 [polkadot-parachain] sp_state_machine::execution::StateMachine&lt;B,H,Exec&gt;::execute
+#19 [polkadot-parachain] &lt;sc_executor::executor::WasmExecutor&lt;H&gt; as sp_core::traits::CodeExecutor&gt;::call
+#20 [polkadot-parachain] sc_executor::executor::WasmExecutor&lt;H&gt;::with_instance::{{closure}}
+#21 [polkadot-parachain] sc_executor_common::wasm_runtime::WasmInstance::call_export
+#22 [polkadot-parachain] sc_executor_wasmtime::runtime::WasmtimeInstance::call_impl
+#23 [polkadot-parachain] wasmtime_setjmp
+#24 [polkadot-parachain] wasmtime_runtime::traphandlers::catch_traps::call_closure
+#25 71074767b28e
+#26 710747516d93
+#27 710747523a14
+#28 7107478fef12
+#29 [polkadot-parachain] &lt;F as wasmtime::func::IntoFunc&lt;T,(wasmtime::func::Caller&lt;T&gt;,A1),R&gt;&gt;::into_func::wasm_to_host_shim
+#30 [polkadot-parachain] sp_io::storage::ExtStorageRootVersion2::call
+#31 [polkadot-parachain] &lt;sp_state_machine::ext::Ext&lt;H,B&gt; as sp_externalities::Externalities&gt;::storage_root
+#32 [polkadot-parachain] sp_state_machine::overlayed_changes::OverlayedChanges&lt;H&gt;::storage_root
+#33 [polkadot-parachain] sp_state_machine::trie_backend_essence::TrieBackendEssence&lt;S,H,C,R&gt;::storage_root::{{closure}}
+#34 [polkadot-parachain] core::ptr::drop_in_place&lt;trie_db::triedbmut::TrieDBMut&lt;sp_trie::LayoutV1&lt;sp_runtime::traits::BlakeTwo256&gt;&gt;&gt;
+#35 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit::{{closure}}
+#36 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#37 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#38 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#39 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#40 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#41 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#42 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#43 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#44 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#45 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child::{{closure}}
+#46 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::commit_child
+#47 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node
+#48 [polkadot-parachain] &lt;sp_trie::cache::TrieCache&lt;H&gt; as trie_db::TrieCache&lt;sp_trie::node_codec::NodeCodec&lt;H&gt;&gt;&gt;::get_or_insert_node
+#49 [polkadot-parachain] trie_db::triedbmut::TrieDBMut&lt;L&gt;::cache_node::{{closure}}
+#50 [polkadot-parachain] trie_db::node::Node::to_owned_node
+#51 [libbytehound.so] _rjem_malloc [api.rs:429]</div><div class="script-file"><div>/graph14.svg</div><a href="http://127.0.0.1:8060/data/51d5daaddd12f7f4256aae3190432d5b/script_files/ce8058eec6fe276de1e2e2609d29459d/graph14.svg" target="_blank"><img src="r01_files/graph14.svg"></a></div><div class="println">--------------------------------------------------------------------------------</div><div class="message">Script finished in 1.407137628s</div></div><br></div></div></div></main></div></div> <script src="r01_files/index.17712f07.js" type="module"></script> </body></html>
