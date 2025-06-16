@@ -116,6 +116,7 @@ pub use {rococo_runtime, rococo_runtime_constants};
 pub use {westend_runtime, westend_runtime_constants};
 
 pub use fake_runtime_api::{GetLastTimestamp, RuntimeApi};
+use sp_blockchain::TransactionNameProvider;
 
 #[cfg(feature = "full-node")]
 pub type FullBackend = sc_service::TFullBackend<Block>;
@@ -448,6 +449,8 @@ fn new_partial_basics(
 			&config,
 			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 			executor,
+			None,
+			Box::new(sp_blockchain::NameProvider::new()),
 		)?;
 	let client = Arc::new(client);
 
@@ -467,6 +470,12 @@ fn new_partial_basics(
 	Ok(Basics { task_manager, client, backend, keystore_container, telemetry })
 }
 
+pub struct TxNameProvider;
+impl TransactionNameProvider for TxNameProvider {
+	fn get_transaction_name(&self) -> Option<(Vec<u8>, Vec<u8>)> {
+		None
+	}
+}
 #[cfg(feature = "full-node")]
 fn new_partial<ChainSelection>(
 	config: &mut Configuration,

@@ -19,7 +19,7 @@
 use super::*;
 use crate::xcm_config::Collectives;
 use frame_support::{parameter_types, traits::EitherOf};
-use frame_system::EnsureRootWithSuccess;
+use frame_system::{EnsureNone, EnsureRootWithSuccess};
 use pallet_xcm::{EnsureXcm, IsVoiceOfBody};
 use xcm::latest::BodyId;
 
@@ -44,6 +44,8 @@ impl pallet_conviction_voting::Config for Runtime {
 	type MaxTurnout =
 		frame_support::traits::tokens::currency::ActiveIssuanceOf<Balances, Self::AccountId>;
 	type Polls = Referenda;
+	type VotingHooks = ();
+	type VoteRemovalOrigin = frame_system::EnsureNever<Self::AccountId>;
 }
 
 parameter_types! {

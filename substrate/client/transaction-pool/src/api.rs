@@ -39,6 +39,7 @@ use sp_runtime::{
 	transaction_validity::{TransactionSource, TransactionValidity},
 };
 use sp_transaction_pool::runtime_api::TaggedTransactionQueue;
+use sp_blockchain::TransactionPriorityModuleT;
 
 use crate::{
 	error::{self, Error},
@@ -117,7 +118,8 @@ where
 		+ BlockBackend<Block>
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
-		+ HeaderMetadata<Block, Error = sp_blockchain::Error>,
+		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
+		+ TransactionPriorityModuleT,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {
@@ -218,7 +220,8 @@ where
 		+ BlockBackend<Block>
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
-		+ HeaderMetadata<Block, Error = sp_blockchain::Error>,
+		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
+		+ TransactionPriorityModuleT,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {
@@ -240,6 +243,7 @@ where
 			sp_tracing::Level::TRACE, "runtime::validate_transaction";
 		{
 			if api_version >= 3 {
+				let priority = client.get_priority();
 				runtime_api.validate_transaction(at, source, uxt, at)
 					.map_err(|e| Error::RuntimeApi(e.to_string()))
 			} else {
@@ -279,7 +283,8 @@ where
 		+ BlockBackend<Block>
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
-		+ HeaderMetadata<Block, Error = sp_blockchain::Error>,
+		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
+		+ TransactionPriorityModuleT,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {

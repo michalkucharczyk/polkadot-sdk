@@ -148,6 +148,8 @@ pub(crate) trait NodeSpec {
 				telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 				executor,
 				true,
+				None,
+				Box::new(sp_blockchain::NameProvider::new()),
 			)?;
 		let client = Arc::new(client);
 
