@@ -1017,6 +1017,7 @@ impl pallet_conviction_voting::Config for Runtime {
 	type Polls = Referenda;
 	type BlockNumberProvider = System;
 	type VotingHooks = ();
+	type VoteRemovalOrigin = frame_system::EnsureNever<AccountId>;
 }
 
 parameter_types! {

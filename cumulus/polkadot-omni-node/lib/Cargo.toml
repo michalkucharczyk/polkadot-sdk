@@ -106,6 +106,8 @@ sc-transaction-pool.workspace = true
 scale-info = { workspace = true }
 serde = { features = ["derive"], workspace = true, default-features = true }
 serde_json = { workspace = true, default-features = true }
+sp-blockchain.workspace = true
+sp-blockchain.default-features = true
 sp-api.default-features = true
 sp-api.workspace = true
 sp-block-builder.default-features = true

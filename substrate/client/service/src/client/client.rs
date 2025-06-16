@@ -52,10 +52,7 @@ use sp_api::{
 	ApiExt, ApiRef, CallApiAt, CallApiAtParams, ConstructRuntimeApi, Core as CoreApi,
 	ProvideRuntimeApi,
 };
-use sp_blockchain::{
-	self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error,
-	HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo,
-};
+use sp_blockchain::{self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error, HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo, TransactionPriorityModifier, TransactionPriorityModifierT};
 use sp_consensus::{BlockOrigin, BlockStatus, Error as ConsensusError};
 
 use sc_utils::mpsc::{tracing_unbounded, TracingUnboundedSender};
@@ -87,6 +84,7 @@ use std::{
 
 use super::call_executor::LocalCallExecutor;
 use sp_core::traits::CodeExecutor;
+use sp_runtime::transaction_validity::TransactionPriority;
 
 type NotificationSinks<T> = Mutex<Vec<TracingUnboundedSender<T>>>;
 
@@ -114,6 +112,7 @@ where
 	telemetry: Option<TelemetryHandle>,
 	unpin_worker_sender: TracingUnboundedSender<UnpinWorkerMessage<Block>>,
 	code_provider: CodeProvider<Block, B, E>,
+	tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 	_phantom: PhantomData<RA>,
 }
 
@@ -191,6 +190,7 @@ pub fn new_with_backend<B, E, Block, G, RA>(
 	prometheus_registry: Option<Registry>,
 	telemetry: Option<TelemetryHandle>,
 	config: ClientConfig<Block>,
+	tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 ) -> sp_blockchain::Result<Client<B, LocalCallExecutor<Block, B, E>, Block, RA>>
 where
 	E: CodeExecutor + sc_executor::RuntimeVersionOf,
@@ -206,7 +206,7 @@ where
 	let call_executor =
 		LocalCallExecutor::new(backend.clone(), executor, config.clone(), extensions)?;
 
-	Client::new(
+		Client::new(
 		backend,
 		call_executor,
 		spawn_handle,
@@ -216,6 +216,7 @@ where
 		prometheus_registry,
 		telemetry,
 		config,
+		tx_priority_modifier,
 	)
 }
 
@@ -369,6 +370,7 @@ where
 		prometheus_registry: Option<Registry>,
 		telemetry: Option<TelemetryHandle>,
 		config: ClientConfig<Block>,
+		tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 	) -> sp_blockchain::Result<Self>
 	where
 		G: BuildGenesisBlock<
@@ -421,6 +423,7 @@ where
 			telemetry,
 			unpin_worker_sender,
 			code_provider,
+			tx_priority_modifier,
 			_phantom: Default::default(),
 		})
 	}
@@ -2094,5 +2097,22 @@ where
 			.blockchain()
 			.number(hash)
 			.map_err(|e| sp_transaction_storage_proof::Error::Application(Box::new(e)))
+	}
+}
+
+impl<B, E, Block, RA> TransactionPriorityModifierT for Client<B, E, Block, RA>
+where
+	B: backend::Backend<Block>,
+	E: CallExecutor<Block>,
+	Block: BlockT,
+{
+	type Block = Block;
+
+	fn get_priority(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority> {
+		let Some(priority_modifier) = &self.tx_priority_modifier else {
+		    return None;
+		};
+
+		priority_modifier.get_priority(tx)
 	}
 }
