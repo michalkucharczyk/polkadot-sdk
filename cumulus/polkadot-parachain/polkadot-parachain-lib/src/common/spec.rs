@@ -149,7 +149,6 @@ pub(crate) trait NodeSpec {
 				executor,
 				true,
 				None,
-				Box::new(sp_blockchain::NameProvider::new()),
 			)?;
 		let client = Arc::new(client);
 

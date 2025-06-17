@@ -2,55 +2,58 @@ use std::marker::PhantomData;
 use codec::{Decode, Encode};
 use serde::Deserialize;
 use sp_runtime::transaction_validity::TransactionPriority;
-use serde_json::from_str;
 use std::path::Path;
 use sp_api::__private::BlockT;
 use sp_core::H160;
-use sp_runtime::testing::TestXt;
-use sp_runtime::traits;
-use sp_runtime::traits::Extrinsic;
 
 pub trait TransactionNameProvider: Send + Sync {
     type Block: BlockT;
     fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)>;
 }
-pub struct NameProvider<B: BlockT>(PhantomData<B>);
-impl<B: BlockT> TransactionNameProvider for NameProvider<B> {
+pub struct NoNameProvider<B: BlockT>(PhantomData<B>);
+impl<B: BlockT> TransactionNameProvider for NoNameProvider<B> {
     type Block = B;
-    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
+    fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
         None
     }
 }
-impl<B: BlockT> NameProvider<B> {
+impl<B: BlockT> NoNameProvider<B> {
     pub fn new() -> Self {
         Self(PhantomData)
     }
 }
 pub trait TransactionPriorityModuleT {
-    fn get_priority(&self) -> Option<TransactionPriority>;
+    type Block: BlockT;
+    fn get_priority(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority>;
 }
 
-pub struct TransactionPriorityModule {
+pub struct TransactionPriorityModule<Block> {
     priority_list: Vec<TransactionPriorityItem>,
+    pub tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
 }
 
-impl TransactionPriorityModule {
-    pub fn new(tx_priority_list: Option<&Path>) -> Self {
-        if let Some(path) = tx_priority_list {
-            let file = std::fs::File::open(path).unwrap();
-            let reader = std::io::BufReader::new(file);
-            let data: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
-            Self { priority_list: data }
+impl<Block: BlockT> TransactionPriorityModule<Block> {
+    pub fn new(tx_priority_list: &Path, tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>) -> Self {
+        let file = std::fs::File::open(tx_priority_list).unwrap();
+        let reader = std::io::BufReader::new(file);
+        let data: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
 
-        } else {
-            Self { priority_list: vec![] }
+        Self { priority_list: data,
+            tx_name_provider
         }
+    }
+
+    pub fn get_priority(&self, module: Vec<u8>, extrinsic: Vec<u8>) -> Option<TransactionPriority> {
+        let priority_item = self.priority_list.iter().find(|item| item.module == module && item.extrinsic == extrinsic);
+        if let Some(item) = priority_item {
+            Some(item.priority)
+        } else { None }
     }
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct SubstrateTransactionDetail {
-    index: u32,
+    data: Vec<u8>,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
@@ -61,13 +64,15 @@ pub struct EvmTransactionDetail {
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub enum TransactionDetail {
-    Evm(EvmTransactionDetail),
-    Substrate(SubstrateTransactionDetail)
+    Substrate(SubstrateTransactionDetail),
+    Evm(EvmTransactionDetail)
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct TransactionPriorityItem {
-    transaction: TransactionDetail,
+    module: Vec<u8>,
+    extrinsic: Vec<u8>,
+    transaction: Option<TransactionDetail>,
     priority: TransactionPriority,
 }
 

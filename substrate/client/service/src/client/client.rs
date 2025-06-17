@@ -52,7 +52,7 @@ use sp_api::{
 	ApiExt, ApiRef, CallApiAt, CallApiAtParams, ConstructRuntimeApi, Core as CoreApi,
 	ProvideRuntimeApi,
 };
-use sp_blockchain::{self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error, HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo, TransactionNameProvider, TransactionPriorityModule, TransactionPriorityModuleT};
+use sp_blockchain::{self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error, HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo, TransactionPriorityModule, TransactionPriorityModuleT};
 use sp_consensus::{BlockOrigin, BlockStatus, Error as ConsensusError};
 
 use sc_utils::mpsc::{tracing_unbounded, TracingUnboundedSender};
@@ -114,8 +114,7 @@ where
 	telemetry: Option<TelemetryHandle>,
 	unpin_worker_sender: TracingUnboundedSender<UnpinWorkerMessage<Block>>,
 	code_provider: CodeProvider<Block, B, E>,
-	tx_priority_module: TransactionPriorityModule,
-	tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
+	tx_priority_module: Option<TransactionPriorityModule<Block>>,
 	_phantom: PhantomData<RA>,
 }
 
@@ -405,8 +404,7 @@ where
 		prometheus_registry: Option<Registry>,
 		telemetry: Option<TelemetryHandle>,
 		config: ClientConfig<Block>,
-		tx_priority_list: Option<&std::path::Path>,
-		tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
+		tx_priority_module: Option<TransactionPriorityModule<Block>>,
 	) -> sp_blockchain::Result<Self>
 	where
 		G: BuildGenesisBlock<
@@ -459,8 +457,7 @@ where
 			telemetry,
 			unpin_worker_sender,
 			code_provider,
-			tx_priority_module: TransactionPriorityModule::new(tx_priority_list),
-			tx_name_provider,
+			tx_priority_module,
 			_phantom: Default::default(),
 		})
 	}
@@ -2141,8 +2138,16 @@ where
 	E: CallExecutor<Block>,
 	Block: BlockT,
 {
-	fn get_priority(&self) -> Option<TransactionPriority> {
-		// let p = self.tx_priority_module
-		None
+	type Block = Block;
+
+	fn get_priority(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority> {
+		if let Some(priority_module) = &self.tx_priority_module {
+			if let Some((module, extrinsic)) = priority_module.tx_name_provider.get_transaction_name(tx) {
+				priority_module.get_priority(module, extrinsic)
+			} else { None }
+
+		} else { None }
+
+
 	}
 }

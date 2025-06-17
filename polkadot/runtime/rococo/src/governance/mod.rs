@@ -17,8 +17,8 @@
 //! New governance configurations for the Rococo runtime.
 
 use super::*;
-use frame_support::{ord_parameter_types, parameter_types, traits::{ConstU16, EitherOf}};
-use frame_system::{EnsureRootWithSuccess, EnsureSignedBy};
+use frame_support::{parameter_types, traits::{ConstU16, EitherOf}};
+use frame_system::EnsureRootWithSuccess;
 
 mod origins;
 pub use origins::{

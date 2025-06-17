@@ -216,7 +216,6 @@ pub fn new_partial(
 			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 			executor,
 			None,
-			Box::new(sp_blockchain::NameProvider::new())
 		)?;
 	let client = Arc::new(client);
 

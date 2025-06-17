@@ -119,7 +119,7 @@ where
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
 		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
-		+ TransactionPriorityModuleT,
+		+ TransactionPriorityModuleT<Block = Block>,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {
@@ -221,7 +221,7 @@ where
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
 		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
-		+ TransactionPriorityModuleT,
+		+ TransactionPriorityModuleT<Block = Block>,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {
@@ -239,13 +239,23 @@ where
 
 		use sp_api::Core;
 
+		let priority_modifier = client.get_priority(uxt.clone());
+
 		sp_tracing::within_span!(
 			sp_tracing::Level::TRACE, "runtime::validate_transaction";
 		{
 			if api_version >= 3 {
-				let priority = client.get_priority();
-				runtime_api.validate_transaction(at, source, uxt, at)
-					.map_err(|e| Error::RuntimeApi(e.to_string()))
+				let runtime_priority = runtime_api.validate_transaction(at, source, uxt, at)
+					.map_err(|e| Error::RuntimeApi(e.to_string()))?;
+				if let Ok(mut validity) = runtime_priority.clone() {
+					if let Some(new_priority) = priority_modifier {
+						validity.priority = new_priority;
+						return Ok(Ok(validity))
+					}
+				}
+
+				Ok(runtime_priority)
+
 			} else {
 				let block_number = client.to_number(&BlockId::Hash(at))
 					.map_err(|e| Error::RuntimeApi(e.to_string()))?
@@ -264,12 +274,28 @@ where
 
 				if api_version == 2 {
 					#[allow(deprecated)] // old validate_transaction
-					runtime_api.validate_transaction_before_version_3(at, source, uxt)
-						.map_err(|e| Error::RuntimeApi(e.to_string()))
+					let runtime_priority = runtime_api.validate_transaction_before_version_3(at, source, uxt)
+						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
+					if let Ok(mut validity) = runtime_priority.clone() {
+						if let Some(new_priority) = priority_modifier {
+							validity.priority = new_priority;
+							return Ok(Ok(validity))
+						}
+					}
+
+					Ok(runtime_priority)
 				} else {
 					#[allow(deprecated)] // old validate_transaction
-					runtime_api.validate_transaction_before_version_2(at, uxt)
-						.map_err(|e| Error::RuntimeApi(e.to_string()))
+					let runtime_priority = runtime_api.validate_transaction_before_version_2(at, uxt)
+						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
+					if let Ok(mut validity) = runtime_priority.clone() {
+						if let Some(new_priority) = priority_modifier {
+							validity.priority = new_priority;
+							return Ok(Ok(validity))
+						}
+					}
+
+					Ok(runtime_priority)
 				}
 			}
 		})
@@ -284,7 +310,7 @@ where
 		+ BlockIdTo<Block>
 		+ HeaderBackend<Block>
 		+ HeaderMetadata<Block, Error = sp_blockchain::Error>
-		+ TransactionPriorityModuleT,
+		+ TransactionPriorityModuleT<Block = Block>,
 	Client: Send + Sync + 'static,
 	Client::Api: TaggedTransactionQueue<Block>,
 {
