@@ -1,22 +1,29 @@
+use std::marker::PhantomData;
 use codec::{Decode, Encode};
 use serde::Deserialize;
 use sp_runtime::transaction_validity::TransactionPriority;
 use serde_json::from_str;
 use std::path::Path;
+use sp_api::__private::BlockT;
 use sp_core::H160;
+use sp_runtime::testing::TestXt;
+use sp_runtime::traits;
+use sp_runtime::traits::Extrinsic;
 
-pub trait TransactionNameProvider {
-    fn get_transaction_name(&self) -> Option<(Vec<u8>, Vec<u8>)>;
+pub trait TransactionNameProvider: Send + Sync {
+    type Block: BlockT;
+    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)>;
 }
-pub struct NameProvider;
-impl TransactionNameProvider for NameProvider {
-    fn get_transaction_name(&self) -> Option<(Vec<u8>, Vec<u8>)> {
+pub struct NameProvider<B: BlockT>(PhantomData<B>);
+impl<B: BlockT> TransactionNameProvider for NameProvider<B> {
+    type Block = B;
+    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
         None
     }
 }
-impl NameProvider {
+impl<B: BlockT> NameProvider<B> {
     pub fn new() -> Self {
-        Self
+        Self(PhantomData)
     }
 }
 pub trait TransactionPriorityModuleT {

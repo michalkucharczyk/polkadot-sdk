@@ -472,7 +472,9 @@ fn new_partial_basics(
 
 pub struct TxNameProvider;
 impl TransactionNameProvider for TxNameProvider {
-	fn get_transaction_name(&self) -> Option<(Vec<u8>, Vec<u8>)> {
+	type Block = Block;
+
+	fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
 		None
 	}
 }

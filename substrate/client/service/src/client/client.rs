@@ -115,7 +115,7 @@ where
 	unpin_worker_sender: TracingUnboundedSender<UnpinWorkerMessage<Block>>,
 	code_provider: CodeProvider<Block, B, E>,
 	tx_priority_module: TransactionPriorityModule,
-	tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
 	_phantom: PhantomData<RA>,
 }
 
@@ -406,7 +406,7 @@ where
 		telemetry: Option<TelemetryHandle>,
 		config: ClientConfig<Block>,
 		tx_priority_list: Option<&std::path::Path>,
-		tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+		tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
 	) -> sp_blockchain::Result<Self>
 	where
 		G: BuildGenesisBlock<

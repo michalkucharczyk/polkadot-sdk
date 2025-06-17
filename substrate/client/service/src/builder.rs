@@ -129,7 +129,7 @@ pub fn new_full_client<TBl, TRtApi, TExec>(
 	telemetry: Option<TelemetryHandle>,
 	executor: TExec,
 	tx_priority_list: Option<&std::path::Path>,
-	tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider: Box<dyn TransactionNameProvider<Block = TBl> + Send + Sync>,
 ) -> Result<TFullClient<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -145,7 +145,7 @@ pub fn new_full_parts_record_import<TBl, TRtApi, TExec>(
 	executor: TExec,
 	enable_import_proof_recording: bool,
 	tx_priority_list: Option<&std::path::Path>,
-	tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider: Box<dyn TransactionNameProvider<Block = TBl> + Send + Sync>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -177,7 +177,7 @@ pub fn new_full_parts<TBl, TRtApi, TExec>(
 	telemetry: Option<TelemetryHandle>,
 	executor: TExec,
 	tx_priority_list: Option<&std::path::Path>,
-	tx_name_provider:  Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider:  Box<dyn TransactionNameProvider<Block = TBl> + Send + Sync>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -195,7 +195,7 @@ pub fn new_full_parts_with_genesis_builder<TBl, TRtApi, TExec, TBuildGenesisBloc
 	genesis_block_builder: TBuildGenesisBlock,
 	enable_import_proof_recording: bool,
 	tx_priority_list: Option<&std::path::Path>,
-	tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider: Box<dyn TransactionNameProvider<Block = TBl> + Send + Sync>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -319,7 +319,7 @@ pub fn new_client<E, Block, RA, G>(
 	telemetry: Option<TelemetryHandle>,
 	config: ClientConfig<Block>,
 	tx_priority_list: Option<&std::path::Path>,
-	tx_name_provider: Box<dyn TransactionNameProvider + Send + Sync>,
+	tx_name_provider: Box<dyn TransactionNameProvider<Block = Block> + Send + Sync>,
 ) -> Result<
 	Client<
 		Backend<Block>,
