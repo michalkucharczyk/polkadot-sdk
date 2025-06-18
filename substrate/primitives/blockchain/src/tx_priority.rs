@@ -5,6 +5,7 @@ use sp_runtime::transaction_validity::TransactionPriority;
 use std::path::Path;
 use sp_api::__private::BlockT;
 use sp_core::H160;
+use sp_runtime::traits::AccountIdConversion;
 
 pub trait TransactionDetailProvider: Send + Sync {
     type Block: BlockT;
@@ -52,11 +53,6 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
-pub struct SubstrateTransactionDetail {
-    pub signer: H160,
-}
-
-#[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct EvmTransactionDetail {
     pub call_address: Option<H160>,
     pub signer: H160,
@@ -64,7 +60,6 @@ pub struct EvmTransactionDetail {
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub enum TransactionTypeDetail {
-    Substrate(SubstrateTransactionDetail),
     Evm(EvmTransactionDetail)
 }
 
@@ -72,7 +67,7 @@ pub enum TransactionTypeDetail {
 pub struct  TransactionDetail {
     pub module: &'static str,
     pub extrinsic: &'static str,
-    pub transaction_data: TransactionTypeDetail,
+    pub transaction_data: Option<TransactionTypeDetail>,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
@@ -90,6 +85,7 @@ fn test_me() {
 
     let file = std::fs::File::open(Path::new("src/my_list.json")).unwrap();
     let reader = std::io::BufReader::new(file);
+
     let u: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
 
     println!("- - - {:?}",u);
