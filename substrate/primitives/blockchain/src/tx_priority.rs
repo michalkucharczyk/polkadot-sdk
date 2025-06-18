@@ -70,9 +70,9 @@ pub enum TransactionTypeDetail {
 
 #[derive(Clone, Debug)]
 pub struct  TransactionDetail {
-    module: &'static str,
-    extrinsic: &'static str,
-    transaction_data: Option<TransactionTypeDetail>,
+    pub module: &'static str,
+    pub extrinsic: &'static str,
+    pub transaction_data: Option<TransactionTypeDetail>,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
