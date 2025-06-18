@@ -68,10 +68,10 @@ pub enum TransactionTypeDetail {
     Evm(EvmTransactionDetail)
 }
 
-#[derive(Clone, Encode, Decode, Deserialize, Debug)]
+#[derive(Clone, Debug)]
 pub struct  TransactionDetail {
-    module: String,
-    extrinsic: String,
+    module: &'static str,
+    extrinsic: &'static str,
     transaction_data: Option<TransactionTypeDetail>,
 }
 
