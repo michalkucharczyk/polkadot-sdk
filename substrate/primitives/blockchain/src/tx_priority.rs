@@ -58,8 +58,8 @@ pub struct SubstrateTransactionDetail {
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct EvmTransactionDetail {
-    pub call_address: H160,
-    pub signer: Option<H160>,
+    pub call_address: Option<H160>,
+    pub signer: H160,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
@@ -72,7 +72,7 @@ pub enum TransactionTypeDetail {
 pub struct  TransactionDetail {
     pub module: &'static str,
     pub extrinsic: &'static str,
-    pub transaction_data: Option<TransactionTypeDetail>,
+    pub transaction_data: TransactionTypeDetail,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
