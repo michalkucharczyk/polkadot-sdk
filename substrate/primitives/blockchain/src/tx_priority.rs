@@ -5,29 +5,20 @@ use sp_runtime::transaction_validity::TransactionPriority;
 use std::path::Path;
 use sp_api::__private::BlockT;
 use sp_core::H160;
-use sp_runtime::traits::AccountIdConversion;
 
+/// Provides transaction details required by `TransactionPriorityModule`.
 pub trait TransactionDetailProvider: Send + Sync {
     type Block: BlockT;
     fn get_transaction_detail(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail>;
 }
-pub struct NoDetailProvider<B: BlockT>(PhantomData<B>);
-impl<B: BlockT> TransactionDetailProvider for NoDetailProvider<B> {
-    type Block = B;
-    fn get_transaction_detail(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail> {
-        None
-    }
-}
-impl<B: BlockT> NoDetailProvider<B> {
-    pub fn new() -> Self {
-        Self(PhantomData)
-    }
-}
+
+/// Implemented for the `Client`, to get tx priorities from the transaction pool.
 pub trait TransactionPriorityModuleT {
     type Block: BlockT;
     fn get_priority(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority>;
 }
 
+/// Main struct for getting TX priority from the specified list.
 pub struct TransactionPriorityModule<Block> {
     priority_list: Vec<TransactionPriorityItem>,
     pub tx_name_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
@@ -52,6 +43,7 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
     }
 }
 
+/// Transaction details specific for an EVM transaction
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct EvmTransactionDetail {
     pub call_address: Option<H160>,
@@ -63,6 +55,7 @@ pub enum TransactionTypeDetail {
     Evm(EvmTransactionDetail)
 }
 
+/// Transaction details used to determine transaction's priority.
 #[derive(Clone, Debug)]
 pub struct  TransactionDetail {
     pub module: &'static str,
@@ -70,6 +63,7 @@ pub struct  TransactionDetail {
     pub transaction_data: Option<TransactionTypeDetail>,
 }
 
+/// Data type of the `tx_priority_list` json file.
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct TransactionPriorityItem {
     module: String,
@@ -77,46 +71,3 @@ pub struct TransactionPriorityItem {
     transaction_data: Option<TransactionTypeDetail>,
     priority: TransactionPriority,
 }
-
-#[test]
-fn test_me() {
-    // let path = std::env::current_dir().unwrap();
-    // println!("The current directory is {}", path.display());
-
-    let file = std::fs::File::open(Path::new("src/my_list.json")).unwrap();
-    let reader = std::io::BufReader::new(file);
-
-    let u: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
-
-    println!("- - - {:?}",u);
-
-    // let l = TransactionPriorityModule::new(Path::new("src/my_list.json"), Box::new(NoNameProvider::new()));
-}
-
-// example file my_list.json
-
-// [
-// {
-// "module": "Balances",
-// "extrinsic": "transfer_allow_death",
-// "transaction_data": null,
-// "priority": 7
-// }
-// ]
-
-// [
-// {
-// "transaction":{
-// "Substrate":{
-// "index": 4
-// }},"priority": 7
-// },
-// {
-// "transaction": {
-// "Evm": {
-// "call_address": "0x7e878d91757ee4e599109fa861909f177e7785b0",
-// "signer": null
-// }},
-// "priority": 123
-// }
-// ]

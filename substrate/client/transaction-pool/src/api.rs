@@ -239,6 +239,8 @@ where
 
 		use sp_api::Core;
 
+		// Get the priority from the `TransactionPriorityModule`.
+		// If the transaction is not listed in the module, use the priority obtained from the runtime.
 		let priority_modifier = client.get_priority(uxt.clone());
 
 		sp_tracing::within_span!(
@@ -252,6 +254,7 @@ where
 
 				if let Ok(mut validity) = runtime_priority.clone() {
 					if let Some(new_priority) = priority_modifier {
+						// override the runtime priority by the priority from the `TransactionPriorityModule`
 						validity.priority = new_priority;
 						return Ok(Ok(validity))
 					}
@@ -283,6 +286,7 @@ where
 						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
 					if let Ok(mut validity) = runtime_priority.clone() {
 						if let Some(new_priority) = priority_modifier {
+							// override the runtime priority by the priority from the `TransactionPriorityModule`
 							validity.priority = new_priority;
 							return Ok(Ok(validity))
 						}
@@ -295,6 +299,7 @@ where
 						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
 					if let Ok(mut validity) = runtime_priority.clone() {
 						if let Some(new_priority) = priority_modifier {
+							// override the runtime priority by the priority from the `TransactionPriorityModule`
 							validity.priority = new_priority;
 							return Ok(Ok(validity))
 						}
