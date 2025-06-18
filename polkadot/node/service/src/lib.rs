@@ -116,7 +116,6 @@ pub use {rococo_runtime, rococo_runtime_constants};
 pub use {westend_runtime, westend_runtime_constants};
 
 pub use fake_runtime_api::{GetLastTimestamp, RuntimeApi};
-use sp_blockchain::TransactionNameProvider;
 
 #[cfg(feature = "full-node")]
 pub type FullBackend = sc_service::TFullBackend<Block>;
@@ -469,14 +468,6 @@ fn new_partial_basics(
 	Ok(Basics { task_manager, client, backend, keystore_container, telemetry })
 }
 
-pub struct TxNameProvider;
-impl TransactionNameProvider for TxNameProvider {
-	type Block = Block;
-
-	fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
-		None
-	}
-}
 #[cfg(feature = "full-node")]
 fn new_partial<ChainSelection>(
 	config: &mut Configuration,

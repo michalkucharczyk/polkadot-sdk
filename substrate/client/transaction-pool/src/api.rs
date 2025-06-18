@@ -247,12 +247,17 @@ where
 			if api_version >= 3 {
 				let runtime_priority = runtime_api.validate_transaction(at, source, uxt, at)
 					.map_err(|e| Error::RuntimeApi(e.to_string()))?;
+
+				log::info!(target: "tx_priority_module", "runtime priority: {:?}, new priority {:?}", runtime_priority, priority_modifier);
+
 				if let Ok(mut validity) = runtime_priority.clone() {
 					if let Some(new_priority) = priority_modifier {
 						validity.priority = new_priority;
 						return Ok(Ok(validity))
 					}
 				}
+
+				log::info!(target: "tx_priority_module", "new priority {:?}", runtime_priority);
 
 				Ok(runtime_priority)
 

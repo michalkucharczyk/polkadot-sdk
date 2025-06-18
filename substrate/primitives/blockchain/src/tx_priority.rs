@@ -8,12 +8,12 @@ use sp_core::H160;
 
 pub trait TransactionNameProvider: Send + Sync {
     type Block: BlockT;
-    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)>;
+    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(&str, &str)>;
 }
 pub struct NoNameProvider<B: BlockT>(PhantomData<B>);
 impl<B: BlockT> TransactionNameProvider for NoNameProvider<B> {
     type Block = B;
-    fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(Vec<u8>, Vec<u8>)> {
+    fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(&str, &str)> {
         None
     }
 }
@@ -43,7 +43,7 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
         }
     }
 
-    pub fn get_priority(&self, module: Vec<u8>, extrinsic: Vec<u8>) -> Option<TransactionPriority> {
+    pub fn get_priority(&self, module: &str, extrinsic: &str) -> Option<TransactionPriority> {
         let priority_item = self.priority_list.iter().find(|item| item.module == module && item.extrinsic == extrinsic);
         if let Some(item) = priority_item {
             Some(item.priority)
@@ -53,13 +53,13 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct SubstrateTransactionDetail {
-    data: Vec<u8>,
+    pub signer: H160,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct EvmTransactionDetail {
-    call_address: H160,
-    signer: Option<H160>,
+    pub call_address: H160,
+    pub signer: Option<H160>,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
@@ -70,9 +70,9 @@ pub enum TransactionDetail {
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct TransactionPriorityItem {
-    module: Vec<u8>,
-    extrinsic: Vec<u8>,
-    transaction: Option<TransactionDetail>,
+    module: String,
+    extrinsic: String,
+    transaction_data: Option<TransactionDetail>,
     priority: TransactionPriority,
 }
 
@@ -87,10 +87,20 @@ fn test_me() {
 
     println!("- - - {:?}",u);
 
-    let l = TransactionPriorityModule::new(Some(Path::new("src/my_list.json")));
+    // let l = TransactionPriorityModule::new(Path::new("src/my_list.json"), Box::new(NoNameProvider::new()));
 }
 
 // example file my_list.json
+
+// [
+// {
+// "module": "Balances",
+// "extrinsic": "transfer_allow_death",
+// "transaction_data": null,
+// "priority": 7
+// }
+// ]
+
 // [
 // {
 // "transaction":{
