@@ -1,4 +1,3 @@
-use std::marker::PhantomData;
 use codec::{Decode, Encode};
 use serde::Deserialize;
 use sp_runtime::transaction_validity::TransactionPriority;
@@ -21,17 +20,17 @@ pub trait TransactionPriorityModuleT {
 /// Main struct for getting TX priority from the specified list.
 pub struct TransactionPriorityModule<Block> {
     priority_list: Vec<TransactionPriorityItem>,
-    pub tx_name_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
+    pub tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
 }
 
 impl<Block: BlockT> TransactionPriorityModule<Block> {
-    pub fn new(tx_priority_list: &Path, tx_name_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
+    pub fn new(tx_priority_list: &Path, tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
         let file = std::fs::File::open(tx_priority_list).unwrap();
         let reader = std::io::BufReader::new(file);
         let data: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
 
         Self { priority_list: data,
-            tx_name_provider
+            tx_detail_provider
         }
     }
 

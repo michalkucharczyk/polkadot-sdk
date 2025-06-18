@@ -2142,7 +2142,7 @@ where
 
 	fn get_priority(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority> {
 		if let Some(priority_module) = &self.tx_priority_module {
-			if let Some(tx_detail) = priority_module.tx_name_provider.get_transaction_detail(tx) {
+			if let Some(tx_detail) = priority_module.tx_detail_provider.get_transaction_detail(tx) {
 				priority_module.get_priority(tx_detail)
 			} else { None }
 
