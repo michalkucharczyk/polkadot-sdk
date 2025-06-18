@@ -6,18 +6,18 @@ use std::path::Path;
 use sp_api::__private::BlockT;
 use sp_core::H160;
 
-pub trait TransactionNameProvider: Send + Sync {
+pub trait TransactionDetailProvider: Send + Sync {
     type Block: BlockT;
-    fn get_transaction_name(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<(&str, &str)>;
+    fn get_transaction_detail(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail>;
 }
-pub struct NoNameProvider<B: BlockT>(PhantomData<B>);
-impl<B: BlockT> TransactionNameProvider for NoNameProvider<B> {
+pub struct NoDetailProvider<B: BlockT>(PhantomData<B>);
+impl<B: BlockT> TransactionDetailProvider for NoDetailProvider<B> {
     type Block = B;
-    fn get_transaction_name(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<(&str, &str)> {
+    fn get_transaction_detail(&self, _tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail> {
         None
     }
 }
-impl<B: BlockT> NoNameProvider<B> {
+impl<B: BlockT> NoDetailProvider<B> {
     pub fn new() -> Self {
         Self(PhantomData)
     }
@@ -29,11 +29,11 @@ pub trait TransactionPriorityModuleT {
 
 pub struct TransactionPriorityModule<Block> {
     priority_list: Vec<TransactionPriorityItem>,
-    pub tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>,
+    pub tx_name_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
 }
 
 impl<Block: BlockT> TransactionPriorityModule<Block> {
-    pub fn new(tx_priority_list: &Path, tx_name_provider: Box<dyn TransactionNameProvider<Block = Block>>) -> Self {
+    pub fn new(tx_priority_list: &Path, tx_name_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
         let file = std::fs::File::open(tx_priority_list).unwrap();
         let reader = std::io::BufReader::new(file);
         let data: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
@@ -43,8 +43,8 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
         }
     }
 
-    pub fn get_priority(&self, module: &str, extrinsic: &str) -> Option<TransactionPriority> {
-        let priority_item = self.priority_list.iter().find(|item| item.module == module && item.extrinsic == extrinsic);
+    pub fn get_priority(&self, tx_detail: TransactionDetail) -> Option<TransactionPriority> {
+        let priority_item = self.priority_list.iter().find(|item| item.module == tx_detail.module && item.extrinsic == tx_detail.extrinsic);
         if let Some(item) = priority_item {
             Some(item.priority)
         } else { None }
@@ -63,16 +63,23 @@ pub struct EvmTransactionDetail {
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
-pub enum TransactionDetail {
+pub enum TransactionTypeDetail {
     Substrate(SubstrateTransactionDetail),
     Evm(EvmTransactionDetail)
+}
+
+#[derive(Clone, Encode, Decode, Deserialize, Debug)]
+pub struct  TransactionDetail {
+    module: String,
+    extrinsic: String,
+    transaction_data: Option<TransactionTypeDetail>,
 }
 
 #[derive(Clone, Encode, Decode, Deserialize, Debug)]
 pub struct TransactionPriorityItem {
     module: String,
     extrinsic: String,
-    transaction_data: Option<TransactionDetail>,
+    transaction_data: Option<TransactionTypeDetail>,
     priority: TransactionPriority,
 }
 
