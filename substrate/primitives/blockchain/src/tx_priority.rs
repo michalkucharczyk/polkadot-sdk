@@ -1,8 +1,9 @@
 use codec::{Decode, Encode};
 use serde::Deserialize;
-use sp_runtime::transaction_validity::TransactionPriority;
-use std::path::Path;
-use sp_api::__private::BlockT;
+use sp_runtime::{
+    traits::Block as BlockT,
+    transaction_validity::TransactionPriority,
+};
 use sp_core::H160;
 
 /// Provides transaction details required by `TransactionPriorityModule`.
@@ -26,10 +27,12 @@ pub struct TransactionPriorityModule<Block> {
 }
 
 impl<Block: BlockT> TransactionPriorityModule<Block> {
-    pub fn new(tx_priority_list: &Path, tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
-        let file = std::fs::File::open(tx_priority_list).unwrap();
-        let reader = std::io::BufReader::new(file);
-        let data: Vec<TransactionPriorityItem> = serde_json::from_reader(reader).unwrap();
+    pub fn new(json_data: Option<&'static str>, tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
+        let data = if let Some(data_str) = json_data {
+            serde_json::from_str(&data_str).unwrap()
+        } else {
+            Vec::new()
+        };
 
         Self { priority_list: data,
             tx_detail_provider
