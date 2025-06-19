@@ -20,6 +20,8 @@ pub trait TransactionPriorityModuleT {
 /// Main struct for getting TX priority from the specified list.
 pub struct TransactionPriorityModule<Block> {
     priority_list: Vec<TransactionPriorityItem>,
+    // dynamic dispatch here. This can be changed to use a generic type, but this would require
+    // way more changes in the existing code.
     pub tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
 }
 
@@ -37,6 +39,32 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
     pub fn get_priority(&self, tx_detail: TransactionDetail) -> Option<TransactionPriority> {
         let priority_item = self.priority_list.iter().find(|item| item.module == tx_detail.module && item.extrinsic == tx_detail.extrinsic);
         if let Some(item) = priority_item {
+
+            if let Some(TransactionTypeDetail::Evm(item_tx_data)) = &item.transaction_data {
+                if let Some(TransactionTypeDetail::Evm(tx_data)) = tx_detail.transaction_data {
+                    if item_tx_data.signer != tx_data.signer {
+                        return None
+                    }
+
+                    if let Some(item_call_address) = item_tx_data.call_address {
+                        if let Some(tx_call_address) = tx_data.call_address {
+                            if item_call_address != tx_call_address {
+                                return None
+                            }
+                        } else {
+                            // call_address is present in the list, but not in the TX we received
+                            return None
+                        }
+                    }
+
+                    return Some(item.priority)
+                } else {
+                    // signer is present in the list, but not in the TX we received
+                    return None
+                }
+
+            }
+
             Some(item.priority)
         } else { None }
     }
