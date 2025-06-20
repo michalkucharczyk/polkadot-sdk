@@ -27,8 +27,13 @@ pub struct TransactionPriorityModule<Block> {
 }
 
 impl<Block: BlockT> TransactionPriorityModule<Block> {
+    /// Parameters:
+    ///  `json_data`: Json string with `Vec<TransactionPriorityItem>`.
+    ///     Can be set to `None` if no transaction priorities should be overwritten.
+    ///  `tx_detail_provider`: Type providing `TransactionDetail`.
     pub fn new(json_data: Option<&'static str>, tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {
         let data = if let Some(data_str) = json_data {
+            // it's up to the implementors to make sure that the list doesn't contain duplicate entries.
             serde_json::from_str(&data_str).unwrap()
         } else {
             Vec::new()
