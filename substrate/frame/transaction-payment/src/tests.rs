@@ -287,23 +287,6 @@ fn signed_ext_length_fee_is_also_updated_per_congestion() {
 }
 
 #[test]
-fn test_me() {
-	use scale_info::TypeInfo;
-	println!("- - - - - ");
-	let call = RuntimeCall::Balances(BalancesCall::transfer_allow_death { dest: 2, value: 69 });
-	let origin = 111111;
-	let extra = ();
-	let xt = TestXt::new(call.clone(), Some((origin, extra)));
-	let info = xt.get_dispatch_info();
-	let ext = xt.encode();
-	let len = ext.len() as u32;
-
-	let unsigned_xt = TestXt::<_, ()>::new(call, None);
-	let unsigned_xt_info = unsigned_xt.get_dispatch_info();
-
-	// println!("{:?}", TestXt::type_info());
-}
-#[test]
 fn query_info_and_fee_details_works() {
 	let call = RuntimeCall::Balances(BalancesCall::transfer_allow_death { dest: 2, value: 69 });
 	let origin = 111111;
