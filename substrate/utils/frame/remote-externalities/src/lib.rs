@@ -100,6 +100,19 @@ impl<B: BlockT> Snapshot<B> {
 
 		Decode::decode(&mut &*bytes).map_err(|_| "Decode failed")
 	}
+
+	fn load_from_bytes(bytes: Vec<u8>) -> Result<Snapshot<B>> {
+		// The first item in the SCALE encoded struct bytes is the snapshot version. We decode and
+		// check that first, before proceeding to decode the rest of the snapshot.
+		let snapshot_version = SnapshotVersion::decode(&mut &*bytes)
+			.map_err(|_| "Failed to decode snapshot version")?;
+
+		if snapshot_version != SNAPSHOT_VERSION {
+			return Err("Unsupported snapshot version detected. Please create a new snapshot.")
+		}
+
+		Decode::decode(&mut &*bytes).map_err(|_| "Decode failed")
+	}
 }
 
 /// An externalities that acts exactly the same as [`sp_io::TestExternalities`] but has a few extra
