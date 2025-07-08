@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Plox Graph</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+      body { font-family: sans-serif; margin: 20px; }
+      html, body {
+        height: auto;
+        overflow-y: scroll;
+      }   
+      .plot-panel { margin-bottom: 10px; }
+      .plot-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: sans-serif;
+        margin-bottom: 5px;
+      }
+
+      .plot-title {
+        font-weight: bold;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .plot-toolbar {
+        display: flex;
+        gap: 4px;
+      }
+
+      .plot-toolbar button {
+        background: white;
+        border: 1px solid black;
+        padding: 3px 6px;
+        font-family: monospace;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .plot-toolbar button:hover {
+        background: black;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="plot-container">
+      
+      <div class="plot-wrapper" data-panel-id="plot0">
+        <div class="plot-controls">
+          <div class="plot-title">Peers</div>
+          <div class="plot-toolbar">
+            <button onclick="toggleScale('plot0', this)" title="Toggle Y axis scale (log or lin)">Lin</button>
+            <button onclick="moveUp('plot0')" title="Move this plot up">↑</button>
+            <button onclick="moveDown('plot0')" title="Move this plot down">↓</button>
+            <button onclick="toggleVisibility('plot0', this)" title="Hide or show this plot">Hide</button>
+
+          </div>
+        </div>
+        <div id="plot0" class="plot-panel"></div>
+      </div>
+      
+      <div class="plot-wrapper" data-panel-id="plot1">
+        <div class="plot-controls">
+          <div class="plot-title">Views/txs</div>
+          <div class="plot-toolbar">
+            <button onclick="toggleScale('plot1', this)" title="Toggle Y axis scale (log or lin)">Lin</button>
+            <button onclick="moveUp('plot1')" title="Move this plot up">↑</button>
+            <button onclick="moveDown('plot1')" title="Move this plot down">↓</button>
+            <button onclick="toggleVisibility('plot1', this)" title="Hide or show this plot">Hide</button>
+
+          </div>
+        </div>
+        <div id="plot1" class="plot-panel"></div>
+      </div>
+      
+      <div class="plot-wrapper" data-panel-id="plot2">
+        <div class="plot-controls">
+          <div class="plot-title">Block building</div>
+          <div class="plot-toolbar">
+            <button onclick="toggleScale('plot2', this)" title="Toggle Y axis scale (log or lin)">Lin</button>
+            <button onclick="moveUp('plot2')" title="Move this plot up">↑</button>
+            <button onclick="moveDown('plot2')" title="Move this plot down">↓</button>
+            <button onclick="toggleVisibility('plot2', this)" title="Hide or show this plot">Hide</button>
+
+          </div>
+        </div>
+        <div id="plot2" class="plot-panel"></div>
+      </div>
+      
+    </div>
+
+    <script>
+      function toggleVisibility(id, buttonEl) {
+        const plotEl = document.getElementById(id);
+        const isVisible = plotEl.style.display !== 'none';
+
+        plotEl.style.display = isVisible ? 'none' : '';
+        buttonEl.textContent = isVisible ? 'Show' : 'Hide';
+      }
+
+      function toggleScale(id, buttonEl) {
+        const current = buttonEl.textContent.toLowerCase();
+        const newScale = current === 'lin' ? 'log' : 'linear';
+
+        Plotly.relayout(id, {
+          'yaxis.type': newScale,
+          'yaxis.autorange': true
+        }).then(() => {
+          buttonEl.textContent = newScale === 'linear' ? 'Lin' : 'Log';
+        }).catch(err => {
+          console.error("Scale toggle failed:", err);
+          alert("Could not switch scale. Ensure all Y values are > 0 for log.");
+        });
+      }
+
+      function moveDown(id) {
+        const wrapper = document.querySelector(`[data-panel-id="${id}"]`);
+        const container = document.getElementById("plot-container");
+
+        if (!wrapper || wrapper.parentNode !== container) return;
+
+        const next = wrapper.nextElementSibling;
+        if (!next) return;
+
+        container.insertBefore(wrapper, next.nextElementSibling);
+      }
+
+      function moveUp(id) {
+        const wrapper = document.querySelector(`[data-panel-id="${id}"]`);
+        const container = document.getElementById("plot-container");
+
+        if (!wrapper || wrapper.parentNode !== container) return;
+
+        const prev = wrapper.previousElementSibling;
+        if (prev) container.insertBefore(wrapper, prev);
+      }
+
+      function makeLayout(title, scale, xrange) {
+        const layout =  {
+          // title: { text: title, font: { size: 14 } },
+          margin: { l: 50, r: 30, t: 30, b: 30 },
+          height: 400,
+          showlegend: true,
+          legend: { orientation: "h", x: 0, y: -0.3 },
+          hoverlabel: { namelength: -1  },
+
+          yaxis: {
+            title: "Y Axis 1",
+            type: scale,
+            side: "left"
+          },
+          yaxis2: {
+            title: "Y Axis 2",
+            type: scale,
+            overlaying: "y",
+            side: "right"
+          }
+        };
+
+        if (xrange) {
+          layout.xaxis = { range: xrange };
+        }
+        return layout;
+      }
+
+      // OMG :)
+      function enableGlobalCursorLine(plotIds) {
+        console.log("enableGlobalCursorLine called with plots:", plotIds);
+
+        let currentLineX = null;
+
+        plotIds.forEach(sourceId => {
+          const sourceEl = document.getElementById(sourceId);
+          if (!sourceEl) {
+            console.warn(`Plot element with id "${sourceId}" not found.`);
+            return;
+          }
+
+          sourceEl.addEventListener('mousemove', event => {
+            const bbox = sourceEl.getBoundingClientRect();
+            const xPixel = event.clientX - bbox.left;
+            const yPixel = event.clientY - bbox.top;
+
+            const layout = sourceEl._fullLayout;
+            if (!layout) {
+              console.warn(`_fullLayout not available for plot "${sourceId}"`);
+              return;
+            }
+
+            const xaxis = layout.xaxis;
+            if (!xaxis) {
+              console.warn(`xaxis not found in _fullLayout for plot "${sourceId}"`);
+              return;
+            }
+
+            // Check if cursor is inside the x axis range in pixels
+            if (xPixel < xaxis._offset || xPixel > xaxis._offset + xaxis._length) {
+              // Outside plot x axis area
+              // console.log(`Cursor outside x axis range on plot "${sourceId}": xPixel=${xPixel}`);
+              return;
+            }
+
+            // Convert pixel to data coordinate
+            let xValue;
+            try {
+              // Use Plotly's internal methods to convert pixel to data
+              // c2d = coordinate to data, p2c = pixel to coordinate
+              if (typeof xaxis.p2c === 'function' && typeof xaxis.c2d === 'function') {
+                const coord = xaxis.p2c(xPixel - xaxis._offset);
+                xValue = xaxis.c2d(coord);
+              } else {
+                xValue = xaxis.p2d ? xaxis.p2d(xPixel - xaxis._offset) : null;
+              }
+
+            } catch (err) {
+              console.error("Error converting pixel to x value:", err);
+              return;
+            }
+
+            if (!xValue) {
+              console.warn(`Could not determine xValue under cursor for plot "${sourceId}"`);
+              return;
+            }
+
+            // For date axes, xValue is milliseconds since epoch or Date object
+            // Normalize to ISO string for Plotly shape x0/x1
+            let xISO;
+            if (typeof xValue === "number") {
+              xISO = new Date(xValue).toISOString();
+            } else if (xValue instanceof Date) {
+              xISO = xValue.toISOString();
+            } else if (typeof xValue === "string") {
+              xISO = xValue; // assume ISO string
+            } else {
+              console.warn(`Unexpected xValue type for plot "${sourceId}":`, xValue);
+              return;
+            }
+
+            // Avoid redundant relayout calls if line is already at this position
+            if (currentLineX === xISO) {
+              //console.log("Line already at this position:", xISO);
+              return;
+            }
+
+            currentLineX = xISO;
+
+            // console.log(`Cursor at pixel ${xPixel}, xValue: ${xValue}, xISO: ${xISO}`);
+
+            plotIds.forEach(id => {
+              Plotly.relayout(id, {
+                shapes: [{
+                  type: 'line',
+                  x0: xISO,
+                  x1: xISO,
+                  yref: 'paper',
+                  y0: 0,
+                  y1: 1,
+                  line: { color: 'black', width: 1, dash: 'dot' },
+                  layer: 'above'
+                }]
+              }).catch(err => {
+                console.error(`Error updating shape on plot "${id}":`, err);
+              });
+            });
+          });
+
+          sourceEl.addEventListener('mouseleave', () => {
+            // console.log(`Mouse left plot "${sourceId}", removing vertical line.`);
+            plotIds.forEach(id => {
+              Plotly.relayout(id, { shapes: [] }).catch(err => {
+                console.error(`Error removing shapes on plot "${id}":`, err);
+              });
+            });
+            currentLineX = null;
+          });
+        });
+      }
+
+      const config = {
+        displaylogo: false,
+        modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
+        responsive: true
+      };
+
+      const plotPromises = [];
+      
+      plotPromises.push(Plotly.newPlot(
+        "plot0", 
+        [{"type":"scatter","name":"Peers (alice)","mode":"markers","x":["2025-07-08 00:08:19.580","2025-07-08 00:08:24.580","2025-07-08 00:08:29.581","2025-07-08 00:08:34.581","2025-07-08 00:08:39.581","2025-07-08 00:08:44.581","2025-07-08 00:08:49.581","2025-07-08 00:08:54.581","2025-07-08 00:08:59.582","2025-07-08 00:09:04.582","2025-07-08 00:09:09.582","2025-07-08 00:09:14.582","2025-07-08 00:09:19.582"],"y":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],"yaxis":"y","marker":{"size":4},"line":{"width":0.5}},{"type":"scatter","name":"Peers (node01)","mode":"markers","x":["2025-07-08 00:08:19.532","2025-07-08 00:08:24.532","2025-07-08 00:08:29.533","2025-07-08 00:08:34.533","2025-07-08 00:08:39.533","2025-07-08 00:08:44.533","2025-07-08 00:08:49.533","2025-07-08 00:08:54.534","2025-07-08 00:08:59.534","2025-07-08 00:09:04.534","2025-07-08 00:09:09.535","2025-07-08 00:09:14.535","2025-07-08 00:09:19.535"],"y":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],"yaxis":"y","marker":{"size":4},"line":{"width":0.5}},{"type":"scatter","name":"Peers (node02)","mode":"markers","x":["2025-07-08 00:08:19.574","2025-07-08 00:08:24.575","2025-07-08 00:08:29.575","2025-07-08 00:08:34.575","2025-07-08 00:08:39.575","2025-07-08 00:08:44.575","2025-07-08 00:08:49.575","2025-07-08 00:08:54.576","2025-07-08 00:08:59.576","2025-07-08 00:09:04.576","2025-07-08 00:09:09.576","2025-07-08 00:09:14.576","2025-07-08 00:09:19.576"],"y":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],"yaxis":"y","marker":{"size":4},"line":{"width":0.5}},{"type":"scatter","name":"Peers (node03)","mode":"markers","x":["2025-07-08 00:08:19.570","2025-07-08 00:08:24.570","2025-07-08 00:08:29.570","2025-07-08 00:08:34.570","2025-07-08 00:08:39.570","2025-07-08 00:08:44.570","2025-07-08 00:08:49.571","2025-07-08 00:08:54.571","2025-07-08 00:08:59.571","2025-07-08 00:09:04.571","2025-07-08 00:09:09.571","2025-07-08 00:09:14.571","2025-07-08 00:09:19.572"],"y":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],"yaxis":"y","marker":{"size":4},"line":{"width":0.5}},{"type":"scatter","name":"Peers (node04)","mode":"markers","x":["2025-07-08 00:08:19.556","2025-07-08 00:08:24.557","2025-07-08 00:08:29.557","2025-07-08 00:08:34.557","2025-07-08 00:08:39.557","2025-07-08 00:08:44.558","2025-07-08 00:08:49.558","2025-07-08 00:08:54.558","2025-07-08 00:08:59.558","2025-07-08 00:09:04.558","2025-07-08 00:09:09.558","2025-07-08 00:09:14.559","2025-07-08 00:09:19.559"],"y":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],"yaxis":"y","marker":{"size":4},"line":{"width":0.5}}], 
+        makeLayout(
+          "Peers", 
+          "linear",
+          ["2025-07-08 00:08:19","2025-07-08 00:09:22"]
+        ),
+
+        config
+      ));
+      
+      plotPromises.push(Plotly.newPlot(
+        "plot1", 
+        [{"type":"scatter","name":"unwatched (alice)","mode":"lines","x":["2025-07-08 00:08:20.674","2025-07-08 00:08:20.679","2025-07-08 00:08:25.180","2025-07-08 00:08:30.930","2025-07-08 00:08:34.765","2025-07-08 00:08:37.149","2025-07-08 00:08:42.777","2025-07-08 00:08:43.169","2025-07-08 00:08:46.776","2025-07-08 00:08:49.100","2025-07-08 00:08:54.728","2025-07-08 00:08:55.126","2025-07-08 00:08:58.669","2025-07-08 00:09:00.955","2025-07-08 00:09:06.628","2025-07-08 00:09:06.646","2025-07-08 00:09:10.628","2025-07-08 00:09:12.014","2025-07-08 00:09:14.632","2025-07-08 00:09:18.017","2025-07-08 00:09:22.634"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"yaxis":"y","line":{"width":0.5,"shape":"hv"}},{"type":"scatter","name":"unwatched (node01)","mode":"lines","x":["2025-07-08 00:08:20.677","2025-07-08 00:08:20.682","2025-07-08 00:08:25.221","2025-07-08 00:08:31.312","2025-07-08 00:08:34.758","2025-07-08 00:08:37.197","2025-07-08 00:08:42.753","2025-07-08 00:08:43.198","2025-07-08 00:08:46.784","2025-07-08 00:08:48.738","2025-07-08 00:08:54.725","2025-07-08 00:08:55.144","2025-07-08 00:08:58.665","2025-07-08 00:09:00.977","2025-07-08 00:09:06.643","2025-07-08 00:09:06.651","2025-07-08 00:09:10.627","2025-07-08 00:09:12.014","2025-07-08 00:09:14.629","2025-07-08 00:09:18.017","2025-07-08 00:09:22.631"],"y":[0.0,0.0,9844.0,12604.0,12824.0,15208.0,15208.0,15208.0,14792.0,14792.0,12188.0,12188.0,9584.0,9584.0,9584.0,6980.0,4376.0,4376.0,1772.0,1772.0,0.0],"yaxis":"y","line":{"width":0.5,"shape":"hv"}},{"type":"scatter","name":"unwatched (node02)","mode":"lines","x":["2025-07-08 00:08:20.678","2025-07-08 00:08:20.682","2025-07-08 00:08:25.222","2025-07-08 00:08:31.318","2025-07-08 00:08:34.751","2025-07-08 00:08:37.205","2025-07-08 00:08:42.752","2025-07-08 00:08:43.181","2025-07-08 00:08:46.780","2025-07-08 00:08:49.094","2025-07-08 00:08:54.722","2025-07-08 00:08:55.151","2025-07-08 00:08:58.670","2025-07-08 00:09:00.618","2025-07-08 00:09:06.639","2025-07-08 00:09:06.648","2025-07-08 00:09:10.626","2025-07-08 00:09:12.014","2025-07-08 00:09:14.630","2025-07-08 00:09:18.017","2025-07-08 00:09:22.632"],"y":[0.0,0.0,9844.0,12604.0,12824.0,15208.0,15208.0,15208.0,14792.0,14792.0,12188.0,12188.0,9584.0,9584.0,9584.0,6980.0,4376.0,4376.0,1772.0,1772.0,0.0],"yaxis":"y","line":{"width":0.5,"shape":"hv"}},{"type":"scatter","name":"unwatched (node03)","mode":"lines","x":["2025-07-08 00:08:20.674","2025-07-08 00:08:24.827","2025-07-08 00:08:31.317","2025-07-08 00:08:34.750","2025-07-08 00:08:36.836","2025-07-08 00:08:42.751","2025-07-08 00:08:43.151","2025-07-08 00:08:46.776","2025-07-08 00:08:49.085","2025-07-08 00:08:54.731","2025-07-08 00:08:54.795","2025-07-08 00:08:58.667","2025-07-08 00:09:00.985","2025-07-08 00:09:06.403","2025-07-08 00:09:06.632","2025-07-08 00:09:10.626","2025-07-08 00:09:12.013","2025-07-08 00:09:12.015","2025-07-08 00:09:14.629","2025-07-08 00:09:18.017","2025-07-08 00:09:22.632"],"y":[0.0,9844.0,12604.0,12824.0,15208.0,15208.0,15208.0,14792.0,14792.0,12188.0,12188.0,9584.0,9584.0,9584.0,6980.0,4376.0,4376.0,4376.0,1772.0,1772.0,0.0],"yaxis":"y","line":{"width":0.5,"shape":"hv"}},{"type":"scatter","name":"unwatched (node04)","mode":"lines","x":["2025-07-08 00:08:20.681","2025-07-08 00:08:20.683","2025-07-08 00:08:25.198","2025-07-08 00:08:31.304","2025-07-08 00:08:34.756","2025-07-08 00:08:37.158","2025-07-08 00:08:42.761","2025-07-08 00:08:42.828","2025-07-08 00:08:46.774","2025-07-08 00:08:49.085","2025-07-08 00:08:54.723","2025-07-08 00:08:55.144","2025-07-08 00:08:58.668","2025-07-08 00:09:00.952","2025-07-08 00:09:06.628","2025-07-08 00:09:06.638","2025-07-08 00:09:10.626","2025-07-08 00:09:12.010","2025-07-08 00:09:14.629","2025-07-08 00:09:18.013","2025-07-08 00:09:22.631"],"y":[0.0,0.0,9844.0,12604.0,12824.0,15208.0,15208.0,15208.0,14792.0,14792.0,12188.0,12188.0,9584.0,9584.0,9584.0,6980.0,4376.0,4376.0,1772.0,1772.0,0.0],"yaxis":"y","line":{"width":0.5,"shape":"hv"}},{"type":"scatter","name":"watched (alice)","mode":"lines","x":["2025-07-08 00:08:20.674","2025-07-08 00:08:20.679","2025-07-08 00:08:25.180","2025-07-08 00:08:30.930","2025-07-08 00:08:34.765","2025-07-08 00:08:37.149","2025-07-08 00:08:42.777","2025-07-08 00:08:43.169","2025-07-08 00:08:46.776","2025-07-08 00:08:49.100","2025-07-08 00:08:54.728","2025-07-08 00:08:55.126","2025-07-08 00:08:58.669","2025-07-08 00:09:00.955","2025-07-08 00:09:06.628","2025-07-08 00:09:06.646","2025-07-08 00:09:10.628","2025-07-08 00:09:12.014","2025-07-08 00:09:14.632","2025-07-08 00:09:18.017","2025-07-08 00:09:22.634"],"y":[0.0,0.0,10000.0,12604.0,15208.0,15208.0,15208.0,15208.0,14792.0,14792.0,12188.0,12188.0,9584.0,9584.0,9584.0,6980.0,4376.0,4376.0,1772.0,1772.0,0.0],"yaxis":"y","line":{"width":1.0,"shape":"hv"}},{"type":"scatter","name":"watched (node01)","mode":"lines","x":["2025-07-08 00:08:20.677","2025-07-08 00:08:20.682","2025-07-08 00:08:25.221","2025-07-08 00:08:31.312","2025-07-08 00:08:34.758","2025-07-08 00:08:37.197","2025-07-08 00:08:42.753","2025-07-08 00:08:43.198","2025-07-08 00:08:46.784","2025-07-08 00:08:48.738","2025-07-08 00:08:54.725","2025-07-08 00:08:55.144","2025-07-08 00:08:58.665","2025-07-08 00:09:00.977","2025-07-08 00:09:06.643","2025-07-08 00:09:06.651","2025-07-08 00:09:10.627","2025-07-08 00:09:12.014","2025-07-08 00:09:14.629","2025-07-08 00:09:18.017","2025-07-08 00:09:22.631"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"yaxis":"y","line":{"width":1.0,"shape":"hv"}},{"type":"scatter","name":"watched (node02)","mode":"lines","x":["2025-07-08 00:08:20.678","2025-07-08 00:08:20.682","2025-07-08 00:08:25.222","2025-07-08 00:08:31.318","2025-07-08 00:08:34.751","2025-07-08 00:08:37.205","2025-07-08 00:08:42.752","2025-07-08 00:08:43.181","2025-07-08 00:08:46.780","2025-07-08 00:08:49.094","2025-07-08 00:08:54.722","2025-07-08 00:08:55.151","2025-07-08 00:08:58.670","2025-07-08 00:09:00.618","2025-07-08 00:09:06.639","2025-07-08 00:09:06.648","2025-07-08 00:09:10.626","2025-07-08 00:09:12.014","2025-07-08 00:09:14.630","2025-07-08 00:09:18.017","2025-07-08 00:09:22.632"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"yaxis":"y","line":{"width":1.0,"shape":"hv"}},{"type":"scatter","name":"watched (node03)","mode":"lines","x":["2025-07-08 00:08:20.674","2025-07-08 00:08:24.827","2025-07-08 00:08:31.317","2025-07-08 00:08:34.750","2025-07-08 00:08:36.836","2025-07-08 00:08:42.751","2025-07-08 00:08:43.151","2025-07-08 00:08:46.776","2025-07-08 00:08:49.085","2025-07-08 00:08:54.731","2025-07-08 00:08:54.795","2025-07-08 00:08:58.667","2025-07-08 00:09:00.985","2025-07-08 00:09:06.403","2025-07-08 00:09:06.632","2025-07-08 00:09:10.626","2025-07-08 00:09:12.013","2025-07-08 00:09:12.015","2025-07-08 00:09:14.629","2025-07-08 00:09:18.017","2025-07-08 00:09:22.632"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"yaxis":"y","line":{"width":1.0,"shape":"hv"}},{"type":"scatter","name":"watched (node04)","mode":"lines","x":["2025-07-08 00:08:20.681","2025-07-08 00:08:20.683","2025-07-08 00:08:25.198","2025-07-08 00:08:31.304","2025-07-08 00:08:34.756","2025-07-08 00:08:37.158","2025-07-08 00:08:42.761","2025-07-08 00:08:42.828","2025-07-08 00:08:46.774","2025-07-08 00:08:49.085","2025-07-08 00:08:54.723","2025-07-08 00:08:55.144","2025-07-08 00:08:58.668","2025-07-08 00:09:00.952","2025-07-08 00:09:06.628","2025-07-08 00:09:06.638","2025-07-08 00:09:10.626","2025-07-08 00:09:12.010","2025-07-08 00:09:14.629","2025-07-08 00:09:18.013","2025-07-08 00:09:22.631"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"yaxis":"y","line":{"width":1.0,"shape":"hv"}}], 
+        makeLayout(
+          "Views/txs", 
+          "linear",
+          ["2025-07-08 00:08:19","2025-07-08 00:09:22"]
+        ),
+
+        config
+      ));
+      
+      plotPromises.push(Plotly.newPlot(
+        "plot2", 
+        [{"type":"scatter","name":"value of Prepared block for proposing extrinsics_count: (\\d+) (alice)","mode":"markers","x":["2025-07-08 00:08:20.672","2025-07-08 00:08:30.788"],"y":[2.0,2606.0],"yaxis":"y","marker":{"symbol":"x","size":4},"line":{"width":0.5}},{"type":"scatter","name":"value of Prepared block for proposing extrinsics_count: (\\d+) (node01)","mode":"markers","x":["2025-07-08 00:08:48.700"],"y":[2606.0],"yaxis":"y","marker":{"symbol":"x","size":4},"line":{"width":0.5}},{"type":"scatter","name":"value of Prepared block for proposing extrinsics_count: (\\d+) (node02)","mode":"markers","x":["2025-07-08 00:09:00.584"],"y":[2606.0],"yaxis":"y","marker":{"symbol":"x","size":4},"line":{"width":0.5}},{"type":"scatter","name":"value of Prepared block for proposing extrinsics_count: (\\d+) (node03)","mode":"markers","x":["2025-07-08 00:08:20.672","2025-07-08 00:08:24.782","2025-07-08 00:08:36.789","2025-07-08 00:08:54.739","2025-07-08 00:09:06.376","2025-07-08 00:09:12.006"],"y":[2.0,2606.0,2606.0,2606.0,1774.0,2.0],"yaxis":"y","marker":{"symbol":"x","size":4},"line":{"width":0.5}},{"type":"scatter","name":"value of Prepared block for proposing extrinsics_count: (\\d+) (node04)","mode":"markers","x":["2025-07-08 00:08:42.771","2025-07-08 00:09:12.005","2025-07-08 00:09:18.008"],"y":[2606.0,2.0,2.0],"yaxis":"y","marker":{"symbol":"x","size":4},"line":{"width":0.5}}], 
+        makeLayout(
+          "Block building", 
+          "linear",
+          ["2025-07-08 00:08:19","2025-07-08 00:09:22"]
+        ),
+
+        config
+      ));
+      
+
+      const plots = ["plot0","plot1","plot2"];
+      Promise.all(plotPromises).then(() => {
+        enableGlobalCursorLine(plots);
+      });
+
+      const isSyncing = {};
+      plots.forEach(id => isSyncing[id] = false);
+
+      plots.forEach(sourceId => {
+        const sourceEl = document.getElementById(sourceId);
+        const others = plots.filter(id => id !== sourceId);
+
+        sourceEl.on('plotly_relayout', e => {
+          if (isSyncing[sourceId]) return;
+          // console.log(`Relayout event on ${sourceId}:`, e);
+          let range = null;
+
+          if (Array.isArray(e['xaxis.range'])) {
+            // Case: Reset axes
+            range = e['xaxis.range'];
+          } else if (e['xaxis.range[0]'] && e['xaxis.range[1]']) {
+            // Case: manual zoom/pan
+            range = [e['xaxis.range[0]'], e['xaxis.range[1]']];
+          }
+
+          if (range) {
+            others.forEach(targetId => {
+              isSyncing[targetId] = true;
+              Plotly.relayout(targetId, { 'xaxis.range': range }).then(() => {
+                isSyncing[targetId] = false;
+              });
+            });
+          }
+
+          if (e['xaxis.autorange']) {
+            console.log(`Relayout event on ${sourceId}:`, e);
+            others.forEach(targetId => {
+              isSyncing[targetId] = true;
+              Plotly.relayout(targetId, { 'xaxis.autorange': true }).then(() => {
+                isSyncing[targetId] = false;
+              });
+            });
+          }
+        });
+
+      });
+    </script>
+  </body>
+</html>
