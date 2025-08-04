@@ -241,29 +241,14 @@ where
 
 		// Get the priority from the `TransactionPriorityModule`.
 		// If the transaction is not listed in the module, use the priority obtained from the runtime.
-		let priority_modifier = client.get_priority(uxt.clone());
+		let priority_modifier = client.get_priority(&uxt);
 
 		sp_tracing::within_span!(
 			sp_tracing::Level::TRACE, "runtime::validate_transaction";
-		{
+		let runtime_priority =
 			if api_version >= 3 {
-				let runtime_priority = runtime_api.validate_transaction(at, source, uxt.clone(), at)
-					.map_err(|e| Error::RuntimeApi(e.to_string()))?;
-
-				if let Ok(mut validity) = runtime_priority.clone() {
-					if let Some(new_priority) = priority_modifier {
-						// override the runtime priority by the priority from the `TransactionPriorityModule`
-						validity.priority = new_priority;
-
-						log::debug!(target: "tx_priority_module", "Transaction priority of {:?} has been overwritten to {:?}.", uxt, new_priority);
-
-						return Ok(Ok(validity))
-					}
-				}
-
-
-				Ok(runtime_priority)
-
+				runtime_api.validate_transaction(at, source, uxt.clone(), at)
+					.map_err(|e| Error::RuntimeApi(e.to_string()))?
 			} else {
 				let block_number = client.to_number(&BlockId::Hash(at))
 					.map_err(|e| Error::RuntimeApi(e.to_string()))?
@@ -282,34 +267,29 @@ where
 
 				if api_version == 2 {
 					#[allow(deprecated)] // old validate_transaction
-					let runtime_priority = runtime_api.validate_transaction_before_version_3(at, source, uxt)
-						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
-					if let Ok(mut validity) = runtime_priority.clone() {
-						if let Some(new_priority) = priority_modifier {
-							// override the runtime priority by the priority from the `TransactionPriorityModule`
-							validity.priority = new_priority;
-							return Ok(Ok(validity))
-						}
-					}
-
-					Ok(runtime_priority)
+					runtime_api.validate_transaction_before_version_3(at, source, uxt.clone())
+						.map_err(|e| Error::RuntimeApi(e.to_string()))?
 				} else {
 					#[allow(deprecated)] // old validate_transaction
-					let runtime_priority = runtime_api.validate_transaction_before_version_2(at, uxt)
-						.map_err(|e| Error::RuntimeApi(e.to_string()))?;
-					if let Ok(mut validity) = runtime_priority.clone() {
-						if let Some(new_priority) = priority_modifier {
-							// override the runtime priority by the priority from the `TransactionPriorityModule`
-							validity.priority = new_priority;
-							return Ok(Ok(validity))
-						}
-					}
-
-					Ok(runtime_priority)
+					runtime_api.validate_transaction_before_version_2(at, uxt.clone())
+						.map_err(|e| Error::RuntimeApi(e.to_string()))?
 				}
+		};
+
+		if let Ok(mut validity) = runtime_priority.clone() {
+			if let Some(new_priority) = priority_modifier {
+				// override the runtime priority by the priority from the `TransactionPriorityModule`
+				validity.priority = new_priority;
+
+				log::debug!(target: "tx_priority_module", "Transaction priority of {:?} has been overwritten to {:?}.", uxt, new_priority);
+
+				return Ok(Ok(validity))
 			}
-		})
-	})
+		}
+
+		Ok(runtime_priority)
+)
+})
 }
 
 impl<Client, Block> FullChainApi<Client, Block>

@@ -9,13 +9,13 @@ use sp_core::H160;
 /// Provides transaction details required by `TransactionPriorityModule`.
 pub trait TransactionDetailProvider: Send + Sync {
     type Block: BlockT;
-    fn get_transaction_detail(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail>;
+    fn get_transaction_detail(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail>;
 }
 
 /// Implemented for the `Client`, to get tx priorities from the transaction pool.
 pub trait TransactionPriorityModuleT {
     type Block: BlockT;
-    fn get_priority(&self, tx: <Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority>;
+    fn get_priority(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority>;
 }
 
 /// Main struct for getting TX priority from the specified list.
@@ -44,37 +44,37 @@ impl<Block: BlockT> TransactionPriorityModule<Block> {
         }
     }
 
-    pub fn get_priority(&self, tx_detail: TransactionDetail) -> Option<TransactionPriority> {
+    pub fn get_priority(&self, tx: &<Block as BlockT>::Extrinsic) -> Option<TransactionPriority> {
+        let Some(tx_detail) = self.tx_detail_provider.get_transaction_detail(tx) else {
+            return None;
+        };
+
         let priority_item = self.priority_list.iter().find(|item| item.module == tx_detail.module && item.extrinsic == tx_detail.extrinsic);
-        if let Some(item) = priority_item {
+        let Some(item) = priority_item else { return None };
 
-            if let Some(TransactionTypeDetail::Evm(item_tx_data)) = &item.transaction_data {
-                if let Some(TransactionTypeDetail::Evm(tx_data)) = tx_detail.transaction_data {
-                    if item_tx_data.signer != tx_data.signer {
-                        return None
-                    }
-
-                    if let Some(item_call_address) = item_tx_data.call_address {
-                        if let Some(tx_call_address) = tx_data.call_address {
-                            if item_call_address != tx_call_address {
-                                return None
-                            }
-                        } else {
-                            // call_address is present in the list, but not in the TX we received
-                            return None
-                        }
-                    }
-
-                    return Some(item.priority)
-                } else {
-                    // signer is present in the list, but not in the TX we received
-                    return None
-                }
-
+        if let Some(TransactionTypeDetail::Evm(item_tx_data)) = &item.transaction_data {
+            let Some(TransactionTypeDetail::Evm(tx_data)) = tx_detail.transaction_data else {
+                // signer is present in the list, but not in the TX we received
+                return None
+            };
+            if item_tx_data.signer != tx_data.signer {
+                return None
             }
 
-            Some(item.priority)
-        } else { None }
+            if let Some(item_call_address) = item_tx_data.call_address {
+                let Some(tx_call_address) = tx_data.call_address else {
+                    // call_address is present in the list, but not in the TX we received
+                    return None
+                };
+                if item_call_address != tx_call_address {
+                    return None
+                }
+            }
+
+            return Some(item.priority)
+        }
+
+        Some(item.priority)
     }
 }
 
