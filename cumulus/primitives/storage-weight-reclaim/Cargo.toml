@@ -20,6 +20,7 @@ frame-benchmarking = { optional = true, workspace = true }
 frame-support = { workspace = true }
 frame-system = { workspace = true }
 
+sp-io = { workspace = true }
 sp-runtime = { workspace = true }
 
 cumulus-primitives-core = { workspace = true }

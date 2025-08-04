@@ -156,7 +156,7 @@ where
 		inherited_implication: &impl Implication,
 		source: TransactionSource,
 	) -> Result<(ValidTransaction, Self::Val, T::RuntimeOrigin), TransactionValidityError> {
-		let proof_size = get_proof_size();
+		let proof_size = get_proof_size::<T>();
 
 		self.0
 			.validate(origin, call, info, len, self_implicit, inherited_implication, source)
@@ -200,7 +200,7 @@ where
 			return Ok(inner_refund);
 		};
 
-		let Some(proof_size_after_dispatch) = get_proof_size().defensive_proof(
+		let Some(proof_size_after_dispatch) = get_proof_size::<T>().defensive_proof(
 			"Proof recording enabled during prepare, now disabled. This should not happen.",
 		) else {
 			return Ok(inner_refund)
