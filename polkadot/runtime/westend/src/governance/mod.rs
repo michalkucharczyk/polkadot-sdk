@@ -44,6 +44,8 @@ impl pallet_conviction_voting::Config for Runtime {
 	type MaxTurnout =
 		frame_support::traits::tokens::currency::ActiveIssuanceOf<Balances, Self::AccountId>;
 	type Polls = Referenda;
+	type VotingHooks = ();
+	type VoteRemovalOrigin = frame_system::EnsureNever<Self::AccountId>;
 }
 
 parameter_types! {

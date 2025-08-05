@@ -148,6 +148,7 @@ pub(crate) trait NodeSpec {
 				telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 				executor,
 				true,
+				None,
 			)?;
 		let client = Arc::new(client);
 

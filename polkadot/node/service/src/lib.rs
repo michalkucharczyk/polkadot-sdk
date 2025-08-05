@@ -448,6 +448,7 @@ fn new_partial_basics(
 			&config,
 			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 			executor,
+			None,
 		)?;
 	let client = Arc::new(client);
 

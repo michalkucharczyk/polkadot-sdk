@@ -75,7 +75,7 @@ use sc_telemetry::{telemetry, ConnectionMessage, Telemetry, TelemetryHandle, SUB
 use sc_transaction_pool_api::{MaintainedTransactionPool, TransactionPool};
 use sc_utils::mpsc::{tracing_unbounded, TracingUnboundedSender};
 use sp_api::{CallApiAt, ProvideRuntimeApi};
-use sp_blockchain::{HeaderBackend, HeaderMetadata};
+use sp_blockchain::{HeaderBackend, HeaderMetadata, TransactionPriorityModifier};
 use sp_consensus::block_validation::{
 	BlockAnnounceValidator, Chain, DefaultBlockAnnounceValidator,
 };
@@ -128,12 +128,13 @@ pub fn new_full_client<TBl, TRtApi, TExec>(
 	config: &Configuration,
 	telemetry: Option<TelemetryHandle>,
 	executor: TExec,
+	tx_priority_modifier: Option<TransactionPriorityModifier<TBl>>,
 ) -> Result<TFullClient<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
 	TExec: CodeExecutor + RuntimeVersionOf + Clone,
 {
-	new_full_parts(config, telemetry, executor).map(|parts| parts.0)
+	new_full_parts(config, telemetry, executor, tx_priority_modifier).map(|parts| parts.0)
 }
 
 /// Create the initial parts of a full node with the default genesis block builder.
@@ -142,6 +143,7 @@ pub fn new_full_parts_record_import<TBl, TRtApi, TExec>(
 	telemetry: Option<TelemetryHandle>,
 	executor: TExec,
 	enable_import_proof_recording: bool,
+	tx_priority_modifier: Option<TransactionPriorityModifier<TBl>>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -163,6 +165,7 @@ where
 		backend,
 		genesis_block_builder,
 		enable_import_proof_recording,
+		tx_priority_modifier,
 	)
 }
 /// Create the initial parts of a full node with the default genesis block builder.
@@ -170,12 +173,13 @@ pub fn new_full_parts<TBl, TRtApi, TExec>(
 	config: &Configuration,
 	telemetry: Option<TelemetryHandle>,
 	executor: TExec,
+	tx_priority_modifier: Option<TransactionPriorityModifier<TBl>>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
 	TExec: CodeExecutor + RuntimeVersionOf + Clone,
 {
-	new_full_parts_record_import(config, telemetry, executor, false)
+	new_full_parts_record_import(config, telemetry, executor, false, tx_priority_modifier)
 }
 
 /// Create the initial parts of a full node.
@@ -186,6 +190,7 @@ pub fn new_full_parts_with_genesis_builder<TBl, TRtApi, TExec, TBuildGenesisBloc
 	backend: Arc<TFullBackend<TBl>>,
 	genesis_block_builder: TBuildGenesisBlock,
 	enable_import_proof_recording: bool,
+	tx_priority_modifier: Option<TransactionPriorityModifier<TBl>>,
 ) -> Result<TFullParts<TBl, TRtApi, TExec>, Error>
 where
 	TBl: BlockT,
@@ -249,6 +254,7 @@ where
 				wasm_runtime_substitutes,
 				enable_import_proof_recording,
 			},
+			tx_priority_modifier,
 		)?;
 
 		client
@@ -306,6 +312,7 @@ pub fn new_client<E, Block, RA, G>(
 	prometheus_registry: Option<Registry>,
 	telemetry: Option<TelemetryHandle>,
 	config: ClientConfig<Block>,
+	tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 ) -> Result<
 	Client<
 		Backend<Block>,
@@ -340,6 +347,7 @@ where
 		prometheus_registry,
 		telemetry,
 		config,
+		tx_priority_modifier,
 	)
 }
 
@@ -820,6 +828,7 @@ where
 		+ ProofProvider<TBl>
 		+ HeaderBackend<TBl>
 		+ BlockchainEvents<TBl>
+		+ sp_blockchain::TransactionPriorityModifierT
 		+ 'static,
 	TExPool: TransactionPool<Block = TBl, Hash = <TBl as BlockT>::Hash> + 'static,
 	TImpQu: ImportQueue<TBl> + 'static,
