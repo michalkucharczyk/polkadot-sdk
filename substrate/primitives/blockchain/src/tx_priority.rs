@@ -6,29 +6,29 @@ use sp_runtime::{
 };
 use sp_core::H160;
 
-/// Provides transaction details required by `TransactionPriorityModule`.
+/// Provides transaction details required by `TransactionPriorityModifier`.
 pub trait TransactionDetailProvider: Send + Sync {
     type Block: BlockT;
     fn get_transaction_detail(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionDetail>;
 }
 
 /// Implemented for the `Client`, to get tx priorities from the transaction pool.
-pub trait TransactionPriorityModuleT {
+pub trait TransactionPriorityModifierT {
     type Block: BlockT;
     fn get_priority(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority>;
 }
 
 /// Main struct for getting TX priority from the specified list.
-pub struct TransactionPriorityModule<Block> {
+pub struct TransactionPriorityModifier<Block> {
     priority_list: Vec<TransactionPriorityItem>,
     // dynamic dispatch here. This can be changed to use a generic type, but this would require
     // way more changes in the existing code.
     pub tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>,
 }
 
-impl<Block: BlockT> TransactionPriorityModule<Block> {
+impl<Block: BlockT> TransactionPriorityModifier<Block> {
     /// Parameters:
-    ///  `json_data`: Json string with `Vec<TransactionPriorityItem>`.
+    ///  `json_data`: JSON string with `Vec<TransactionPriorityItem>`.
     ///     Can be set to `None` if no transaction priorities should be overwritten.
     ///  `tx_detail_provider`: Type providing `TransactionDetail`.
     pub fn new(json_data: Option<&'static str>, tx_detail_provider: Box<dyn TransactionDetailProvider<Block = Block>>) -> Self {

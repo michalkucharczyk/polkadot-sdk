@@ -52,7 +52,7 @@ use sp_api::{
 	ApiExt, ApiRef, CallApiAt, CallApiAtParams, ConstructRuntimeApi, Core as CoreApi,
 	ProvideRuntimeApi,
 };
-use sp_blockchain::{self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error, HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo, TransactionPriorityModule, TransactionPriorityModuleT};
+use sp_blockchain::{self as blockchain, Backend as ChainBackend, CachedHeaderMetadata, Error, HeaderBackend as ChainHeaderBackend, HeaderMetadata, Info as BlockchainInfo, TransactionPriorityModifier, TransactionPriorityModifierT};
 use sp_consensus::{BlockOrigin, BlockStatus, Error as ConsensusError};
 
 use sc_utils::mpsc::{tracing_unbounded, TracingUnboundedSender};
@@ -114,7 +114,7 @@ where
 	telemetry: Option<TelemetryHandle>,
 	unpin_worker_sender: TracingUnboundedSender<UnpinWorkerMessage<Block>>,
 	code_provider: CodeProvider<Block, B, E>,
-	tx_priority_module: Option<TransactionPriorityModule<Block>>,
+	tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 	_phantom: PhantomData<RA>,
 }
 
@@ -404,7 +404,7 @@ where
 		prometheus_registry: Option<Registry>,
 		telemetry: Option<TelemetryHandle>,
 		config: ClientConfig<Block>,
-		tx_priority_module: Option<TransactionPriorityModule<Block>>,
+		tx_priority_modifier: Option<TransactionPriorityModifier<Block>>,
 	) -> sp_blockchain::Result<Self>
 	where
 		G: BuildGenesisBlock<
@@ -457,7 +457,7 @@ where
 			telemetry,
 			unpin_worker_sender,
 			code_provider,
-			tx_priority_module,
+			tx_priority_modifier,
 			_phantom: Default::default(),
 		})
 	}
@@ -2132,7 +2132,7 @@ where
 	}
 }
 
-impl<B, E, Block, RA> TransactionPriorityModuleT for Client<B, E, Block, RA>
+impl<B, E, Block, RA> TransactionPriorityModifierT for Client<B, E, Block, RA>
 where
 	B: backend::Backend<Block>,
 	E: CallExecutor<Block>,
@@ -2141,10 +2141,10 @@ where
 	type Block = Block;
 
 	fn get_priority(&self, tx: &<Self::Block as BlockT>::Extrinsic) -> Option<TransactionPriority> {
-		let Some(priority_module) = &self.tx_priority_module else {
+		let Some(priority_modifier) = &self.tx_priority_modifier else {
 		    return None;
 		};
 
-		priority_module.get_priority(tx)
+		priority_modifier.get_priority(tx)
 	}
 }
