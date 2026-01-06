@@ -683,7 +683,12 @@ where
 
 		// If there is still time left for the block in the slot, we sleep the rest of the time.
 		// This ensures that we have some steady block rate.
-		if let Some(sleep) = time_left_for_block.checked_sub(block_production_start.elapsed()) {
+		if let Some(sleep) = time_left_for_block
+			.checked_sub(block_production_start.elapsed())
+			// Let's not sleep for the last block here, to send out the collation as early as
+			// possible.
+			.filter(|_| !is_last_block_in_core)
+		{
 			tokio::time::sleep(sleep).await;
 		}
 	}
