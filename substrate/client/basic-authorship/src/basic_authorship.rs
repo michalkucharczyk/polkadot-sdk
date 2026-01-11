@@ -564,37 +564,33 @@ where
 	///
 	/// # Arguments
 	///
-	/// * `args` - Standard proposal arguments (inherent data, deadlines, etc.)
+	/// * `inherent_data` - Data for creating inherent extrinsics
+	/// * `inherent_digests` - Digest items to include in the block header
+	/// * `max_duration` - Maximum time to spend building the block
+	/// * `block_size_limit` - Optional limit on block size
 	/// * `extra_extrinsics` - Additional extrinsics to apply after pool transactions
 	///
 	/// # Returns
 	///
 	/// A tuple of:
-	/// - The built block proposal (including storage changes)
+	/// - The built block proposal (including storage changes and proof)
 	/// - Results for each extra extrinsic indicating success/failure
 	pub async fn propose_with_extra_extrinsics(
 		self,
-		args: ProposeArgs<Block>,
+		inherent_data: InherentData,
+		inherent_digests: Digest,
+		max_duration: time::Duration,
+		block_size_limit: Option<usize>,
 		extra_extrinsics: Vec<Block::Extrinsic>,
-	) -> Result<(Proposal<Block>, Vec<ExtrinsicResult>), sp_blockchain::Error> {
-		let ProposeArgs {
-			inherent_data,
-			inherent_digests,
-			max_duration,
-			block_size_limit,
-			storage_proof_recorder,
-			extra_extensions,
-		} = args;
-
+	) -> Result<(Proposal<Block, PR::Proof>, Vec<ExtrinsicResult>), sp_blockchain::Error> {
 		// Leave some time for evaluation and block finalization (10%)
 		let deadline = (self.now)() + max_duration - max_duration / 10;
 
 		let mut block_builder = BlockBuilderBuilder::new(&*self.client)
 			.on_parent_block(self.parent_hash)
 			.with_parent_block_number(self.parent_number)
-			.with_proof_recorder(storage_proof_recorder)
+			.with_proof_recording(PR::ENABLED)
 			.with_inherent_digests(inherent_digests)
-			.with_extra_extensions(extra_extensions)
 			.build()?;
 
 		// Reuse existing inherent application logic
@@ -617,7 +613,10 @@ where
 			});
 		}
 
-		let (block, storage_changes) = block_builder.build()?.into_inner();
+		let (block, storage_changes, proof) = block_builder.build()?.into_inner();
+
+		let proof =
+			PR::into_proof(proof).map_err(|e| sp_blockchain::Error::Application(Box::new(e)))?;
 
 		debug!(
 			target: LOG_TARGET,
@@ -627,7 +626,7 @@ where
 			extra_results.iter().filter(|r| r.success).count()
 		);
 
-		Ok((Proposal { block, storage_changes }, extra_results))
+		Ok((Proposal { block, proof, storage_changes }, extra_results))
 	}
 
 	/// Prints a summary and does telemetry + metrics.
