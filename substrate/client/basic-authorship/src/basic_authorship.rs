@@ -57,6 +57,17 @@ const DEFAULT_SOFT_DEADLINE_PERCENT: Percent = Percent::from_percent(50);
 
 const LOG_TARGET: &'static str = "basic-authorship";
 
+/// Result of applying an extrinsic during dry-run.
+#[derive(Clone, Debug)]
+pub struct ExtrinsicResult {
+	/// Index of the extrinsic in the batch (0-indexed).
+	pub index: u32,
+	/// Whether the extrinsic was applied successfully.
+	pub success: bool,
+	/// Error message if the extrinsic failed.
+	pub error: Option<String>,
+}
+
 /// [`Proposer`] factory.
 pub struct ProposerFactory<A, C, PR> {
 	spawn_handle: Box<dyn SpawnNamed>,
@@ -532,6 +543,83 @@ where
 
 		self.transaction_pool.report_invalid(Some(self.parent_hash), unqueue_invalid);
 		Ok(end_reason)
+	}
+
+	/// Like [`propose_with`](Self::propose_with), but adds extra extrinsics after pool
+	/// transactions.
+	///
+	/// Used for dry-run scenarios where we want to simulate specific extrinsics
+	/// on top of the current pool state. The block is built but NOT imported.
+	///
+	/// Returns per-extrinsic results for the extra extrinsics (not for pool transactions
+	/// or inherents).
+	///
+	/// # Arguments
+	///
+	/// * `args` - Standard proposal arguments (inherent data, deadlines, etc.)
+	/// * `extra_extrinsics` - Additional extrinsics to apply after pool transactions
+	///
+	/// # Returns
+	///
+	/// A tuple of:
+	/// - The built block proposal (including storage changes)
+	/// - Results for each extra extrinsic indicating success/failure
+	pub async fn propose_with_extra_extrinsics(
+		self,
+		args: ProposeArgs<Block>,
+		extra_extrinsics: Vec<Block::Extrinsic>,
+	) -> Result<(Proposal<Block>, Vec<ExtrinsicResult>), sp_blockchain::Error> {
+		let ProposeArgs {
+			inherent_data,
+			inherent_digests,
+			max_duration,
+			block_size_limit,
+			storage_proof_recorder,
+			extra_extensions,
+		} = args;
+
+		// Leave some time for evaluation and block finalization (10%)
+		let deadline = (self.now)() + max_duration - max_duration / 10;
+
+		let mut block_builder = BlockBuilderBuilder::new(&*self.client)
+			.on_parent_block(self.parent_hash)
+			.with_parent_block_number(self.parent_number)
+			.with_proof_recorder(storage_proof_recorder)
+			.with_inherent_digests(inherent_digests)
+			.with_extra_extensions(extra_extensions)
+			.build()?;
+
+		// Reuse existing inherent application logic
+		self.apply_inherents(&mut block_builder, inherent_data)?;
+
+		// Apply pool transactions if allowed
+		let mode = block_builder.extrinsic_inclusion_mode();
+		if matches!(mode, ExtrinsicInclusionMode::AllExtrinsics) {
+			self.apply_extrinsics(&mut block_builder, deadline, block_size_limit).await?;
+		}
+
+		// Apply extra extrinsics after pool transactions, collecting results
+		let mut extra_results = Vec::with_capacity(extra_extrinsics.len());
+		for (index, ext) in extra_extrinsics.into_iter().enumerate() {
+			let result = block_builder.push(ext);
+			extra_results.push(ExtrinsicResult {
+				index: index as u32,
+				success: result.is_ok(),
+				error: result.err().map(|e| format!("{:?}", e)),
+			});
+		}
+
+		let (block, storage_changes) = block_builder.build()?.into_inner();
+
+		debug!(
+			target: LOG_TARGET,
+			"Built dry-run block at {} with {} extra extrinsics ({} succeeded)",
+			block.header().number(),
+			extra_results.len(),
+			extra_results.iter().filter(|r| r.success).count()
+		);
+
+		Ok((Proposal { block, storage_changes }, extra_results))
 	}
 
 	/// Prints a summary and does telemetry + metrics.
