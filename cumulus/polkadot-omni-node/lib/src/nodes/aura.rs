@@ -201,7 +201,6 @@ where
 			Block,
 			RuntimeApi,
 			InitBlockImport::BlockImport,
-			InitBlockImport::BlockImportAuxiliaryData,
 		> + 'static,
 	InitBlockImport: self::InitBlockImport<Block, RuntimeApi> + Send + 'static,
 	InitBlockImport::BlockImport:
@@ -223,7 +222,7 @@ where
 			keystore_container,
 			select_chain: _,
 			transaction_pool,
-			other: (_, mut telemetry, _, _),
+			other: (_, mut telemetry, _),
 		} = Self::new_partial(&config)?;
 
 		// Since this is a dev node, prevent it from connecting to peers.
@@ -550,7 +549,6 @@ impl<Block: BlockT<Hash = DbHash>, RuntimeApi, AuraId>
 			ParachainClient<Block, RuntimeApi>,
 			<AuraId::BoundedPair as Pair>::Public,
 		>,
-		(),
 	> for StartSlotBasedAuraConsensus<Block, RuntimeApi, AuraId>
 where
 	RuntimeApi: ConstructNodeRuntimeApi<Block, ParachainClient<Block, RuntimeApi>>,
@@ -583,7 +581,6 @@ where
 		announce_block: Arc<dyn Fn(Hash, Option<Vec<u8>>) + Send + Sync>,
 		backend: Arc<ParachainBackend<Block>>,
 		node_extra_args: NodeExtraArgs,
-		_: (),
 	) -> Result<(), Error> {
 		let proposer = sc_basic_authorship::ProposerFactory::new(
 			task_manager.spawn_handle(),
@@ -646,12 +643,11 @@ where
 		ParachainClient<Block, RuntimeApi>,
 		<AuraId::BoundedPair as Pair>::Public,
 	>;
-	type BlockImportAuxiliaryData = ();
 
 	fn init_block_import(
 		client: Arc<ParachainClient<Block, RuntimeApi>>,
-	) -> sc_service::error::Result<(Self::BlockImport, Self::BlockImportAuxiliaryData)> {
-		Ok((SlotBasedBlockImport::new(client.clone(), client), ()))
+	) -> sc_service::error::Result<Self::BlockImport> {
+		Ok(SlotBasedBlockImport::new(client.clone(), client))
 	}
 }
 
@@ -684,7 +680,7 @@ pub(crate) struct StartLookaheadAuraConsensus<Block, RuntimeApi, AuraId>(
 );
 
 impl<Block: BlockT<Hash = DbHash>, RuntimeApi, AuraId>
-	StartConsensus<Block, RuntimeApi, Arc<ParachainClient<Block, RuntimeApi>>, ()>
+	StartConsensus<Block, RuntimeApi, Arc<ParachainClient<Block, RuntimeApi>>>
 	for StartLookaheadAuraConsensus<Block, RuntimeApi, AuraId>
 where
 	RuntimeApi: ConstructNodeRuntimeApi<Block, ParachainClient<Block, RuntimeApi>>,
@@ -709,7 +705,6 @@ where
 		announce_block: Arc<dyn Fn(Hash, Option<Vec<u8>>) + Send + Sync>,
 		backend: Arc<ParachainBackend<Block>>,
 		node_extra_args: NodeExtraArgs,
-		_: (),
 	) -> Result<(), Error> {
 		let proposer = sc_basic_authorship::ProposerFactory::new(
 			task_manager.spawn_handle(),

@@ -76,7 +76,7 @@ pub(crate) trait BuildImportQueue<
 	) -> sc_service::error::Result<DefaultImportQueue<Block>>;
 }
 
-pub(crate) trait StartConsensus<Block: BlockT, RuntimeApi, BI, BIAuxiliaryData>
+pub(crate) trait StartConsensus<Block: BlockT, RuntimeApi, BI>
 where
 	RuntimeApi: ConstructNodeRuntimeApi<Block, ParachainClient<Block, RuntimeApi>>,
 {
@@ -97,7 +97,6 @@ where
 		announce_block: Arc<dyn Fn(Hash, Option<Vec<u8>>) + Send + Sync>,
 		backend: Arc<ParachainBackend<Block>>,
 		node_extra_args: NodeExtraArgs,
-		block_import_extra_return_value: BIAuxiliaryData,
 	) -> Result<(), sc_service::Error>;
 }
 
@@ -118,11 +117,10 @@ fn warn_if_slow_hardware(hwbench: &sc_sysinfo::HwBench) {
 
 pub(crate) trait InitBlockImport<Block: BlockT, RuntimeApi> {
 	type BlockImport: sc_consensus::BlockImport<Block> + Clone + Send + Sync;
-	type BlockImportAuxiliaryData;
 
 	fn init_block_import(
 		client: Arc<ParachainClient<Block, RuntimeApi>>,
-	) -> sc_service::error::Result<(Self::BlockImport, Self::BlockImportAuxiliaryData)>;
+	) -> sc_service::error::Result<Self::BlockImport>;
 }
 
 pub(crate) struct ClientBlockImport;
@@ -132,12 +130,11 @@ where
 	RuntimeApi: Send + ConstructNodeRuntimeApi<Block, ParachainClient<Block, RuntimeApi>>,
 {
 	type BlockImport = Arc<ParachainClient<Block, RuntimeApi>>;
-	type BlockImportAuxiliaryData = ();
 
 	fn init_block_import(
 		client: Arc<ParachainClient<Block, RuntimeApi>>,
-	) -> sc_service::error::Result<(Self::BlockImport, Self::BlockImportAuxiliaryData)> {
-		Ok((client.clone(), ()))
+	) -> sc_service::error::Result<Self::BlockImport> {
+		Ok(client.clone())
 	}
 }
 
@@ -208,7 +205,6 @@ pub(crate) trait BaseNodeSpec {
 			Self::Block,
 			Self::RuntimeApi,
 			<Self::InitBlockImport as InitBlockImport<Self::Block, Self::RuntimeApi>>::BlockImport,
-			<Self::InitBlockImport as InitBlockImport<Self::Block, Self::RuntimeApi>>::BlockImportAuxiliaryData
 		>
 	>{
 		let telemetry = config
@@ -262,8 +258,7 @@ pub(crate) trait BaseNodeSpec {
 			.build(),
 		);
 
-		let (block_import, block_import_auxiliary_data) =
-			Self::InitBlockImport::init_block_import(client.clone())?;
+		let block_import = Self::InitBlockImport::init_block_import(client.clone())?;
 
 		let block_import = ParachainBlockImport::new(block_import, backend.clone());
 
@@ -283,7 +278,7 @@ pub(crate) trait BaseNodeSpec {
 			task_manager,
 			transaction_pool,
 			select_chain: (),
-			other: (block_import, telemetry, telemetry_worker_handle, block_import_auxiliary_data),
+			other: (block_import, telemetry, telemetry_worker_handle),
 		})
 	}
 }
@@ -300,7 +295,6 @@ pub(crate) trait NodeSpec: BaseNodeSpec {
 		Self::Block,
 		Self::RuntimeApi,
 		<Self::InitBlockImport as InitBlockImport<Self::Block, Self::RuntimeApi>>::BlockImport,
-		<Self::InitBlockImport as InitBlockImport<Self::Block, Self::RuntimeApi>>::BlockImportAuxiliaryData,
 	>;
 
 	const SYBIL_RESISTANCE: CollatorSybilResistance;
@@ -331,8 +325,7 @@ pub(crate) trait NodeSpec: BaseNodeSpec {
 			let parachain_fork_id = parachain_config.chain_spec.fork_id().map(ToString::to_string);
 			let advertise_non_global_ips = parachain_config.network.allow_non_globals_in_dht;
 			let params = Self::new_partial(&parachain_config)?;
-			let (block_import, mut telemetry, telemetry_worker_handle, block_import_auxiliary_data) =
-				params.other;
+			let (block_import, mut telemetry, telemetry_worker_handle) = params.other;
 			let client = params.client.clone();
 			let backend = params.backend.clone();
 			let mut task_manager = params.task_manager;
@@ -558,7 +551,6 @@ pub(crate) trait NodeSpec: BaseNodeSpec {
 					announce_block,
 					backend.clone(),
 					node_extra_args,
-					block_import_auxiliary_data,
 				)?;
 			}
 
