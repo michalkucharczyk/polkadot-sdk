@@ -49,7 +49,7 @@ pub type ParachainBlockImport<Block, BI> =
 	TParachainBlockImport<Block, BI, ParachainBackend<Block>>;
 
 /// Assembly of PartialComponents (enough to run chain ops subcommands)
-pub type ParachainService<Block, RuntimeApi, BI, BIExtraReturnValue> = PartialComponents<
+pub type ParachainService<Block, RuntimeApi, BI> = PartialComponents<
 	ParachainClient<Block, RuntimeApi>,
 	ParachainBackend<Block>,
 	(),
@@ -59,6 +59,5 @@ pub type ParachainService<Block, RuntimeApi, BI, BIExtraReturnValue> = PartialCo
 		ParachainBlockImport<Block, BI>,
 		Option<Telemetry>,
 		Option<TelemetryWorkerHandle>,
-		BIExtraReturnValue,
 	),
 >;
