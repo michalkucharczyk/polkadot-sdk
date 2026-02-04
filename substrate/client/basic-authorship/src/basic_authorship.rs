@@ -582,6 +582,7 @@ where
 		max_duration: time::Duration,
 		block_size_limit: Option<usize>,
 		extra_extrinsics: Vec<Block::Extrinsic>,
+		include_txpool_extrinsics: bool,
 	) -> Result<(Proposal<Block, PR::Proof>, Vec<ExtrinsicResult>), sp_blockchain::Error> {
 		// Leave some time for evaluation and block finalization (10%)
 		let deadline = (self.now)() + max_duration - max_duration / 10;
@@ -598,7 +599,7 @@ where
 
 		// Apply pool transactions if allowed
 		let mode = block_builder.extrinsic_inclusion_mode();
-		if matches!(mode, ExtrinsicInclusionMode::AllExtrinsics) {
+		if include_txpool_extrinsics && matches!(mode, ExtrinsicInclusionMode::AllExtrinsics) {
 			self.apply_extrinsics(&mut block_builder, deadline, block_size_limit).await?;
 		}
 
