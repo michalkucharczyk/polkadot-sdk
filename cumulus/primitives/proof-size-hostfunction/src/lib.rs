@@ -19,7 +19,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(feature = "std")]
-use sp_externalities::ExternalitiesExt;
+use sp_externalities::{Externalities, ExternalitiesExt};
 
 use sp_runtime_interface::runtime_interface;
 
@@ -27,6 +27,66 @@ use sp_runtime_interface::runtime_interface;
 use sp_trie::proof_size_extension::ProofSizeExt;
 
 pub const PROOF_RECORDING_DISABLED: u64 = u64::MAX;
+
+/// Body of version 1 of [`storage_proof_size::storage_proof_size`]: the size of the proof
+/// recorded so far, or [`PROOF_RECORDING_DISABLED`] without [`ProofSizeExt`].
+///
+/// Trie nodes that the storage root at the end of the block will read for the writes of the
+/// block are not included; version 2 ([`storage_proof_size_v2`]) estimates them. Runtimes built
+/// against version 1 call it forever, and weight reclaim writes its result into the state, so
+/// this body must stay as it is: blocks in the history of a chain must import bit-for-bit, and
+/// collator and PVF must agree for a given runtime.
+///
+/// It is a free function, not a method of `sp_externalities::Externalities` like the bodies of
+/// the versioned storage host functions, because the size comes from the [`ProofSizeExt`]
+/// extension: `sp-trie` defines it on top of `sp-externalities`, so the trait cannot name it,
+/// and the host function belongs to cumulus, not to substrate's `sp-io`. Being public, it can be
+/// called directly, which the bare host function call cannot do for a specific version: the
+/// runtime interface macro keeps the per-version functions private.
+///
+/// Test: the version 1 compatibility suite of `cumulus-proof-size-hostfunction-fuzz`
+/// (`tests/v1_compat.rs`) compares this body with master; it reads [`ProofSizeExt`] itself, the
+/// same way, because master has no such function.
+#[cfg(feature = "std")]
+pub fn storage_proof_size_v1(mut ext: &mut dyn Externalities) -> u64 {
+	ext.extension::<ProofSizeExt>()
+		.map_or(PROOF_RECORDING_DISABLED, |e| e.storage_proof_size())
+}
+
+/// Body of version 2 of [`storage_proof_size::storage_proof_size`]: the size of the proof
+/// recorded so far plus the trie nodes the storage root at the end of the block will read for
+/// the writes so far, or [`PROOF_RECORDING_DISABLED`] without [`ProofSizeExt`].
+///
+/// It first records those trie nodes (`Externalities::record_proof_for_dirty_keys`), then reads
+/// the size as [`storage_proof_size_v1`] does. Version 1 cannot be changed to do this, because
+/// runtimes built against it call it forever and weight reclaim writes its result into the
+/// state, so blocks in the history of a chain would no longer import.
+///
+/// Version 2 is registered with `register_only`: nodes provide it, but runtimes keep calling
+/// version 1 until every node serves version 2. Dropping the marker must happen in the same
+/// release as dropping it on `sp_io::storage::append` version 2 and on
+/// `sp_io::default_child_storage::root` version 3, and as switching the three matching shims in
+/// `cumulus-pallet-parachain-system`'s `validate_block` (`host_storage_append`,
+/// `host_default_child_storage_root`, `host_storage_proof_size`) to the new bodies. The
+/// estimation is only sound with the child root semantics of
+/// `default_child_storage::root` version 3: with version 2, which writes child roots into the
+/// main overlay, the fuzzer's pinned scripts `fuzz_child_emptied_root_computed_then_refilled`,
+/// `fuzz_dropped_extrinsic_discards_empty_child_changes` and
+/// `fuzz_dropped_extrinsic_clears_root_cache` estimate below the real proof size or make
+/// collator and validator disagree.
+///
+/// It is a free function for the same reason as [`storage_proof_size_v1`].
+///
+/// Test: the estimation runner of `cumulus-proof-size-hostfunction-fuzz` (`tests/smoke.rs`)
+/// calls this body, together with the new bodies of the two storage host functions, and checks
+/// that the estimation is never exceeded and that collator and validator agree.
+#[cfg(feature = "std")]
+pub fn storage_proof_size_v2(mut ext: &mut dyn Externalities) -> u64 {
+	if ext.extension::<ProofSizeExt>().is_some() {
+		ext.record_proof_for_dirty_keys();
+	}
+	storage_proof_size_v1(ext)
+}
 
 /// Interface that provides access to the current storage proof size.
 ///
@@ -36,8 +96,7 @@ pub const PROOF_RECORDING_DISABLED: u64 = u64::MAX;
 pub trait StorageProofSize {
 	/// Returns the current storage proof size.
 	fn storage_proof_size(&mut self) -> u64 {
-		self.extension::<ProofSizeExt>()
-			.map_or(PROOF_RECORDING_DISABLED, |e| e.storage_proof_size())
+		storage_proof_size_v1(*self)
 	}
 
 	/// Returns the current storage proof size after computing PoV size for storage root.
@@ -49,15 +108,14 @@ pub trait StorageProofSize {
 	/// Registered only, so runtimes keep calling version 1 until all nodes provide version 2.
 	/// Dropping `register_only` must go together with enabling the dirty-key estimation in
 	/// `host_storage_proof_size` of `cumulus-pallet-parachain-system`'s `validate_block`,
-	/// otherwise collator and validator report different proof sizes.
+	/// otherwise collator and validator report different proof sizes, and with dropping
+	/// `register_only` on `sp_io::storage::append` version 2 and
+	/// `sp_io::default_child_storage::root` version 3 (and switching their shims), because the
+	/// estimation is only sound with their semantics. See
+	/// [`storage_proof_size_v2`](crate::storage_proof_size_v2).
 	#[version(2, register_only)]
 	fn storage_proof_size(&mut self) -> u64 {
-		if self.extension::<ProofSizeExt>().is_some() {
-			self.record_proof_for_dirty_keys();
-		}
-
-		self.extension::<ProofSizeExt>()
-			.map_or(PROOF_RECORDING_DISABLED, |e| e.storage_proof_size())
+		storage_proof_size_v2(*self)
 	}
 }
 
