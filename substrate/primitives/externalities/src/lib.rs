@@ -233,6 +233,58 @@ pub trait Externalities: ExtensionStore {
 		state_version: StateVersion,
 	) -> Vec<u8>;
 
+	/// Get the trie root of a child storage map using the given `state_version`, without
+	/// writing to the top-level storage map.
+	///
+	/// This is the body of version 3 of the `default_child_storage::root` host function. Like
+	/// [`Self::child_storage_root_with_version`], the body of versions 1 and 2, it returns the
+	/// root of the child as seen by the current transaction. Unlike it, it never writes, and it
+	/// reuses only the child roots that the storage root cached by an earlier
+	/// [`Self::storage_root`] call computed.
+	///
+	/// [`Self::child_storage_root_with_version`] is wrong in two ways when the runtime computes
+	/// roots in the middle of a block:
+	///
+	/// - While a storage root is cached, it reads the child root key of the top-level map, which
+	///   holds the root of the last child root call or of the block start, not the root of the
+	///   child's current changes: it returns a stale root.
+	/// - Without a cached storage root, it writes the computed root under the child root key into
+	///   the top-level overlay. The runtime sees that write through `storage::get` and
+	///   `storage::next_key`, it ends up in the drained storage changes of the block, and the proof
+	///   size estimation sees a write of the child root key whose kind depends on overlay
+	///   housekeeping that only the collator does (the rollback of extrinsics the block builder
+	///   drops). Collator and validator then estimate different proof sizes, and the validator can
+	///   miss trie nodes it needs.
+	///
+	/// The fix cannot replace the body of [`Self::child_storage_root_with_version`]. Runtimes
+	/// built against versions 1 and 2 call it forever; blocks already in the history of a chain
+	/// were built with it and must import bit-for-bit; and for a given runtime the collator and
+	/// the PVF must run the same body. In the PVF, `host_default_child_storage_root` in the
+	/// `validate_block` implementation of `cumulus-pallet-parachain-system` replaces the
+	/// runtime's bare `sp_io::default_child_storage::root` call, so it has to call the body of
+	/// whichever version that bare call means. Both bodies therefore stay, side by side.
+	///
+	/// Version 3 is registered with `register_only`: nodes provide it, but runtimes keep calling
+	/// version 2 until every node serves version 3. Dropping the marker must happen in the same
+	/// release as dropping it on `storage::append` version 2 and on `storage_proof_size`
+	/// version 2, and as switching the three matching shims in `validate_block`
+	/// (`host_storage_append`, `host_default_child_storage_root`, `host_storage_proof_size`) to
+	/// the new bodies. The proof size estimation of `storage_proof_size` version 2 is only sound
+	/// with the semantics of this method: on top of the old body, the fuzzer's pinned scripts
+	/// `fuzz_child_emptied_root_computed_then_refilled` (estimation below the real proof size),
+	/// `fuzz_dropped_extrinsic_discards_empty_child_changes` and
+	/// `fuzz_dropped_extrinsic_clears_root_cache` (collator and validator disagree) fail.
+	///
+	/// Tests: the version 1 compatibility suite of `cumulus-proof-size-hostfunction-fuzz`
+	/// (`tests/v1_compat.rs`) checks that [`Self::child_storage_root_with_version`] behaves
+	/// exactly as on master; the estimation runner of the same crate (`tests/smoke.rs`) and the
+	/// child root tests of `sp-state-machine` run this method.
+	fn child_storage_root_v3(
+		&mut self,
+		child_info: &ChildInfo,
+		state_version: StateVersion,
+	) -> Vec<u8>;
+
 	/// Append storage item.
 	///
 	/// This assumes specific format of the storage item. Also there is no way to undo this

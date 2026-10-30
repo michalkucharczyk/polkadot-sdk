@@ -568,6 +568,43 @@ pub trait DefaultChildStorage {
 		self.child_storage_root_with_version(&child_info, version)
 	}
 
+	/// Default child root calculation.
+	///
+	/// "Commit" all existing operations and compute the resulting child storage root.
+	/// The hashing algorithm is defined by the `Block`.
+	///
+	/// Returns a `Vec<u8>` that holds the SCALE encoded hash.
+	///
+	/// Unlike version 2, it never writes the child root into the main storage, and it returns
+	/// the root of the child's current changes also after a mid-block `storage::root`. Version 2,
+	/// while a storage root is cached, returns the root stored under the child root key, which
+	/// is stale once the child changed after the last child root call. Without a cached storage
+	/// root, version 2 writes the root under the child root key: the runtime then sees it through
+	/// `storage::get` and `storage::next_key`, it is part of the block's storage changes, and
+	/// the proof size estimation depends on whether the collator rolled back a dropped extrinsic,
+	/// which the PVF never does.
+	///
+	/// Version 2 keeps its body: runtimes built against it call it forever, blocks in the history
+	/// of a chain were built with it and must import bit-for-bit, and the PVF must run the same
+	/// body as the collator for a given runtime.
+	///
+	/// Registered only, so runtimes keep calling version 2 until every node provides version 3.
+	/// Dropping `register_only` must go together with switching `host_default_child_storage_root`
+	/// in `cumulus-pallet-parachain-system`'s `validate_block` to `child_storage_root_v3`, and with
+	/// dropping `register_only` on `storage::append` version 2 and on `storage_proof_size`
+	/// version 2 (and switching their shims): the proof size estimation of `storage_proof_size`
+	/// version 2 is only sound with the semantics of version 3. See
+	/// `Externalities::child_storage_root_v3` for the details and the tests.
+	#[version(3, register_only)]
+	fn root(
+		&mut self,
+		storage_key: PassFatPointerAndRead<&[u8]>,
+		version: PassAs<StateVersion, u8>,
+	) -> AllocateAndReturnFatPointer<Vec<u8>> {
+		let child_info = ChildInfo::new_default(storage_key);
+		self.child_storage_root_v3(&child_info, version)
+	}
+
 	/// Child storage key iteration.
 	///
 	/// Get the next key in storage after the given one in lexicographic order in child storage.
