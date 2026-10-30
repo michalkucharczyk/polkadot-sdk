@@ -321,6 +321,27 @@ impl<H: Hasher> OverlayedChanges<H> {
 		self.top.append_storage(key, element, init, extrinsic_index);
 	}
 
+	/// Append a element to storage, init with existing value if first write, and drop the cached
+	/// storage root.
+	///
+	/// Body of `Externalities::storage_append_v2`, version 2 of the `storage::append` host
+	/// function. [`Self::append_storage`], the body of version 1, does not drop the storage
+	/// transaction cache that [`Self::storage_root`] fills, unlike every other write. After a
+	/// mid-block storage root an append is then invisible to [`Self::storage_root`] and
+	/// [`Self::drain_storage_changes`]: both return the cached root and transaction, which miss
+	/// the appended value. Version 1 has to keep that behaviour, because runtimes built against
+	/// it call it forever and blocks in the history of a chain were built with it; see
+	/// `Externalities::storage_append_v2` for the rollout of version 2.
+	pub fn append_storage_clearing_root_cache(
+		&mut self,
+		key: StorageKey,
+		element: StorageValue,
+		init: impl Fn() -> StorageValue,
+	) {
+		self.mark_dirty();
+		self.append_storage(key, element, init);
+	}
+
 	/// Set a new value for the specified key and child.
 	///
 	/// `None` can be used to delete a value specified by the given key.

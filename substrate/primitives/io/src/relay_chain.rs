@@ -254,6 +254,38 @@ pub trait Storage {
 		self.storage_append(key.to_vec(), value);
 	}
 
+	/// Append the encoded `value` to the storage item at `key`.
+	///
+	/// The storage item needs to implement [`EncodeAppend`](codec::EncodeAppend).
+	///
+	/// Unlike version 1, the append drops a storage root computed earlier in the block. Version 1
+	/// keeps it, so after a mid-block `storage::root` the next root, also the one at the
+	/// end of the block, is the stale cached root, and the committed root and storage transaction
+	/// miss the appended value. On the collator a rollback of a dropped extrinsic drops the stale
+	/// root, in the PVF and on block import nothing does, so the two can disagree.
+	///
+	/// Version 1 keeps its body: runtimes built against it call it forever, blocks in the
+	/// history of a chain were built with it and must import bit-for-bit, and the PVF must run
+	/// the same body as the collator for a given runtime.
+	///
+	/// Registered only, so runtimes keep calling version 1 until every node provides version 2.
+	/// Dropping `register_only` must go together with switching `host_storage_append` in
+	/// `cumulus-pallet-parachain-system`'s `validate_block` to `storage_append_v2`, and with
+	/// dropping `register_only` on `default_child_storage::root` version 3 and on
+	/// `storage_proof_size` version 2 (and switching their shims): the proof size estimation of
+	/// `storage_proof_size` version 2 is only sound with the child root semantics of version 3,
+	/// and collator and PVF agree on every block of the estimation fuzzer only with all three new
+	/// bodies. See `Externalities::storage_append_v2` for the details and the tests.
+	///
+	/// # Warning
+	///
+	/// If the storage item does not support [`EncodeAppend`](codec::EncodeAppend) or
+	/// something else fails at appending, the storage item will be set to `[value]`.
+	#[version(2, register_only)]
+	fn append(&mut self, key: PassFatPointerAndRead<&[u8]>, value: PassFatPointerAndRead<Vec<u8>>) {
+		self.storage_append_v2(key.to_vec(), value);
+	}
+
 	/// "Commit" all existing operations and compute the resulting storage root.
 	///
 	/// The hashing algorithm is defined by the `Block`.

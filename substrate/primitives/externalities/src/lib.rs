@@ -239,6 +239,44 @@ pub trait Externalities: ExtensionStore {
 	/// operation.
 	fn storage_append(&mut self, key: Vec<u8>, value: Vec<u8>);
 
+	/// Append storage item and drop the storage root cached by an earlier storage root call.
+	///
+	/// This is the body of version 2 of the `storage::append` host function. It does what
+	/// [`Self::storage_append`] does and in addition drops the storage root (and the storage
+	/// transaction) that an earlier [`Self::storage_root`] call in the same block cached.
+	///
+	/// [`Self::storage_append`], the body of version 1, keeps that cache. When a runtime computes
+	/// the storage root in the middle of a block and appends afterwards, every later storage root
+	/// call, including the one at the end of the block, returns the stale cached root, and the
+	/// block commits a root and a storage transaction that both miss the appended value. Whether
+	/// the stale root survives depends on whether something else drops the cache in between: on
+	/// the collator, the rollback of an extrinsic that the block builder drops does, while the
+	/// PVF and block import never roll back, so collator and validator can end up with different
+	/// post-block roots.
+	///
+	/// The fix cannot replace the body of [`Self::storage_append`]. Runtimes built against
+	/// version 1 call it forever; blocks already in the history of a chain were built with the
+	/// stale root and must import bit-for-bit; and for a given runtime the collator and the PVF
+	/// must run the same body. In the PVF, `host_storage_append` in the `validate_block`
+	/// implementation of `cumulus-pallet-parachain-system` replaces the runtime's bare
+	/// `sp_io::storage::append` call, so it has to call the body of whichever version that bare
+	/// call means. Both bodies therefore stay, side by side.
+	///
+	/// Version 2 is registered with `register_only`: nodes provide it, but runtimes keep calling
+	/// version 1 until every node serves version 2. Dropping the marker must happen in the same
+	/// release as dropping it on `default_child_storage::root` version 3 and on
+	/// `storage_proof_size` version 2, and as switching the three matching shims in
+	/// `validate_block` (`host_storage_append`, `host_default_child_storage_root`,
+	/// `host_storage_proof_size`) to the new bodies. The proof size estimation of
+	/// `storage_proof_size` version 2 is only sound with the child root semantics of
+	/// `default_child_storage::root` version 3, and collator and PVF agree on every block of the
+	/// estimation fuzzer only with all three new bodies.
+	///
+	/// Tests: the version 1 compatibility suite of `cumulus-proof-size-hostfunction-fuzz`
+	/// (`tests/v1_compat.rs`) checks that [`Self::storage_append`] behaves exactly as on master;
+	/// the estimation runner of the same crate (`tests/smoke.rs`) runs this method.
+	fn storage_append_v2(&mut self, key: Vec<u8>, value: Vec<u8>);
+
 	/// Start a new nested transaction.
 	///
 	/// This allows to either commit or roll back all changes made after this call to the
